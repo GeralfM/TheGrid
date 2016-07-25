@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public class CaseHandler : MonoBehaviour {
 
 	public GeneralHandler myHandler { get; set;}
+	public Animator myAnim { get; set;}
 
 	public string type { get; set;}
 	public int hor{ get; set;} public int ver{ get; set;}
@@ -17,6 +18,7 @@ public class CaseHandler : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		myHandler = GameObject.Find ("MainHandler").GetComponent<GeneralHandler> ();
+		myAnim = gameObject.GetComponent<Animator> ();
 
 		type = "Void";
 
@@ -25,11 +27,14 @@ public class CaseHandler : MonoBehaviour {
 		caracs.Add ("Grad_Heat", 0);
 	}
 
-	public void SetSourceHeat(int value){
-		/*supertype.Add ("Heat");
-		caracs ["Heat"] = 80;
-		foreach (CaseHandler neigh in neighbours.Values)
-			neigh.RecomputeHeat ();*/
+	public void Test(){
+		caracs ["Heat"] = 20; caracs ["Humidity"] = 0;
+		SynchroParams ();
+	}
+
+	public void SynchroParams(){
+		foreach (string param in new List<string>{"Heat","Humidity"})
+			myAnim.SetInteger (param, caracs [param]);
 	}
 
 	public void RecomputeHeat(){
@@ -49,6 +54,7 @@ public class CaseHandler : MonoBehaviour {
 					neigh.RecomputeHeat ();
 			}
 		}
+		SynchroParams ();
 	}
 
 	public void SetType(string newType){

@@ -8,9 +8,15 @@ public class GeneralHandler : MonoBehaviour {
 	public GameObject firstCase;
 	public Text typeCase{ get; set;}
 	public Text caraCase{ get; set;}
+	public Text timeText{ get; set;}
 	public Dictionary<string,CaseHandler> myCases = new Dictionary<string, CaseHandler>(); 
 
+	public bool isDay { get; set;}
+	public int hour { get; set;}
+
 	void Awake () {
+
+		isDay = true; hour = 0;
 
 		for (int i = 0; i < 12; i++) {
 			for (int j = 0; j < 8; j++) {
@@ -35,10 +41,46 @@ public class GeneralHandler : MonoBehaviour {
 					}
 			}
 		}
-
+			
 		typeCase = GameObject.Find ("NameType").GetComponent<Text> ();
 		caraCase = GameObject.Find ("NameCaracs").GetComponent<Text> ();
+		timeText = GameObject.Find ("NameTime").GetComponent<Text> ();
+		PrintTime ();
+		StartCoroutine (Horloge ());
 
+	}
+
+	public void TimeHandler(){
+		hour++;
+
+		if (isDay)
+			foreach (CaseHandler caseH in myCases.Values)
+					caseH.caracs ["Heat"]++;
+		else
+			foreach (CaseHandler caseH in myCases.Values)
+				caseH.caracs ["Heat"]--;
+
+		if (hour == 12) {
+			hour = 0;
+			isDay = !isDay;
+		}
+		PrintTime ();
+	}
+
+	public IEnumerator Horloge(){
+		yield return new WaitForSeconds (50f);
+		StartCoroutine(Horloge ());
+		TimeHandler ();
+	}
+
+	public void PrintTime(){
+		string msg = "";
+		if(isDay)
+			msg+="JOUR";
+		else
+			msg+="NUIT";
+		msg+="\n"+hour+" H";
+		timeText.text = msg;
 	}
 
 	public void PrintInfos(string type, string descr){
