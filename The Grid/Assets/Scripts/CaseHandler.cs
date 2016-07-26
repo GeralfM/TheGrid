@@ -10,6 +10,7 @@ public class CaseHandler : MonoBehaviour {
 
 	public string type { get; set;}
 	public int hor{ get; set;} public int ver{ get; set;}
+	public Dictionary<string,string> descriptionBonus = new Dictionary<string,string>();
 	public List<string> supertype = new List<string>();
 
 	public Dictionary<string,int> caracs = new Dictionary<string, int> ();
@@ -27,16 +28,14 @@ public class CaseHandler : MonoBehaviour {
 		caracs.Add ("Grad_Heat", 0);
 	}
 
-	public void Test(){
-		caracs ["Heat"] = 20; caracs ["Humidity"] = 0;
-		SynchroParams ();
-	}
-
-	public void SynchroParams(){
-		foreach (string param in new List<string>{"Heat","Humidity"})
-			myAnim.SetInteger (param, caracs [param]);
-	}
-
+	/*public void Test(){
+		if (type != "Stone")
+			myAnim.CrossFade ("Stone", 0f);
+		else {
+			myAnim.CrossFade ("Water", 0f);
+		}
+	}*/
+		
 	public void RecomputeHeat(){
 		if (!supertype.Contains ("Heat")) {
 			int result = 0;
@@ -57,13 +56,26 @@ public class CaseHandler : MonoBehaviour {
 		SynchroParams ();
 	}
 
+	public void ChangeParam(string param, int value){
+		caracs [param] = Mathf.Max (Mathf.Min (caracs [param] + value, 100), 0);
+		SynchroParams ();
+	}
+
 	public void SetType(string newType){
 		type = newType;
 		gameObject.GetComponent<Image> ().sprite = Resources.Load<Sprite> ("Sprites/" + newType);
 	}
 
 	public void ReturnDescription(){
-		myHandler.PrintInfos (type, "Heat : " + caracs ["Heat"] + "\nHumidity : " + caracs ["Humidity"]);
+		string descr = "Heat : " + caracs ["Heat"] + "\nHumidity : " + caracs ["Humidity"];
+		foreach (string toAdd in descriptionBonus.Keys)
+			descr += "\n" + toAdd + " : " + caracs[descriptionBonus[toAdd]];
+		myHandler.PrintInfos (type, descr);
+	}
+
+	public void SynchroParams(){
+		foreach (string param in new List<string>{"Heat","Humidity"})
+			myAnim.SetInteger (param, caracs [param]);
 	}
 	
 	// Update is called once per frame

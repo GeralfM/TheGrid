@@ -55,10 +55,10 @@ public class GeneralHandler : MonoBehaviour {
 
 		if (isDay)
 			foreach (CaseHandler caseH in myCases.Values)
-					caseH.caracs ["Heat"]++;
+				caseH.ChangeParam ("Heat", 1);
 		else
 			foreach (CaseHandler caseH in myCases.Values)
-				caseH.caracs ["Heat"]--;
+				caseH.ChangeParam ("Heat", -1);
 
 		if (hour == 12) {
 			hour = 0;

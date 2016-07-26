@@ -46,6 +46,8 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\CaseHandler.cs" />
+     <Compile Include="Assets\Scripts\CasesScripts\Stone_Script.cs" />
+     <Compile Include="Assets\Scripts\CasesScripts\Water_Script.cs" />
      <Compile Include="Assets\Scripts\ChangeCase.cs" />
      <Compile Include="Assets\Scripts\GeneralHandler.cs" />
  <Reference Include="UnityEngine.UI">
