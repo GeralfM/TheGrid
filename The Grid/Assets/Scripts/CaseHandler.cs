@@ -31,7 +31,15 @@ public class CaseHandler : MonoBehaviour {
 		caracs.Add ("Humidity", 50);
 		caracs.Add ("Grad_Heat", 0);
 	}
-		
+
+	/*public void test(){
+		foreach (CaseHandler ca in myHandler.myCases.Values) {
+			ca.myAnim.CrossFade ("Water", 0f);
+			ca.SynchroParams ();
+		}
+		myGround.myAnim.CrossFade ("Organism",0f);
+	}*/
+
 	public void RecomputeHeat(){
 		if (!supertype.Contains ("Heat")) {
 			int result = 0;
@@ -61,11 +69,11 @@ public class CaseHandler : MonoBehaviour {
 		List<string> inter = new List<string>{ "Heat", "Humidity" };
 		if (inter.Contains (myCursor.cursorState)) {
 			if (myCursor.isLeft)
-				caracs [myCursor.cursorState] += 5;
+				ChangeParam (myCursor.cursorState, 5);
 			else
-				caracs [myCursor.cursorState] -= 5;
+				ChangeParam (myCursor.cursorState, -5);
 			
-			supertype.Add ("Heat"); // WOWOWO... Clic droit température baisse toute la grille au même seuil !
+			supertype.Add ("Heat");
 			foreach (CaseHandler neigh in neighbours.Values)
 				neigh.RecomputeHeat ();
 			supertype.Remove ("Heat");

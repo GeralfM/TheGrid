@@ -5,6 +5,7 @@ using System.Collections;
 public class GroundHandler : MonoBehaviour {
 
 	public Image myImage { get; set;}
+	public CaseHandler myCase { get; set;}
 
 	public string type { get; set; }
 	public Animator myAnim { get; set;}
@@ -13,6 +14,7 @@ public class GroundHandler : MonoBehaviour {
 	void Start () {
 		myAnim = gameObject.GetComponent<Animator> ();
 		myImage = gameObject.GetComponent<Image> ();
+		myCase = gameObject.transform.parent.gameObject.GetComponent<CaseHandler> ();
 	}
 
 	public void SetSprite(string newType){
