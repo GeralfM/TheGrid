@@ -9,6 +9,7 @@ public class Water_Script : MonoBehaviour {
 	void Start () {
 		myCase = gameObject.GetComponent<CaseHandler> ();
 		StartCoroutine (humidify ());
+		StartCoroutine (CreateOrganisms ());
 	}
 
 	public IEnumerator humidify(){
@@ -22,6 +23,21 @@ public class Water_Script : MonoBehaviour {
 			}
 			else if (neigh.type == "Void")
 				neigh.ChangeParam ("Humidity", 10);
+		}
+	}
+
+	public IEnumerator CreateOrganisms(){
+		yield return new WaitForSeconds (50);
+		StartCoroutine (CreateOrganisms ());
+		if (myCase.myGround.type == "none" && myCase.caracs ["Heat"] >= 45 
+			&& myCase.caracs ["Heat"] <= 50 && Random.Range (1, 101) <= 30)
+			myCase.myGround.myAnim.CrossFade ("Organism", 0f);
+	}
+
+	void OnDestroy(){
+		if (myCase.myGround.type == "Organism") {
+			myCase.myGround.myAnim.CrossFade ("none",0f);
+			Destroy (myCase.myGround.GetComponent<Organism_Script> ());
 		}
 	}
 

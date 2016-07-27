@@ -77,10 +77,15 @@
 -define:UNITY_EDITOR
 -define:UNITY_EDITOR_64
 -define:UNITY_EDITOR_OSX
+'Assets/Scripts/ButtonHandler.cs'
 'Assets/Scripts/CaseHandler.cs'
+'Assets/Scripts/CasesScripts/Organism_Script.cs'
 'Assets/Scripts/CasesScripts/Stone_Script.cs'
 'Assets/Scripts/CasesScripts/Water_Script.cs'
 'Assets/Scripts/ChangeCase.cs'
+'Assets/Scripts/ChangeGround.cs'
+'Assets/Scripts/CursorHandler.cs'
 'Assets/Scripts/GeneralHandler.cs'
+'Assets/Scripts/GroundHandler.cs'
 -r:'/Applications/Unity/Unity.app/Contents/Frameworks/Mono/lib/mono/unity/System.Runtime.Serialization.dll'
 -r:'/Applications/Unity/Unity.app/Contents/Frameworks/Mono/lib/mono/unity/System.Xml.Linq.dll'
