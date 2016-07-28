@@ -16,6 +16,7 @@ public class CaseHandler : MonoBehaviour {
 	public List<string> supertype = new List<string>();
 
 	public Dictionary<string,int> caracs = new Dictionary<string, int> ();
+	public Dictionary<string,bool> specialProperties = new Dictionary<string, bool>();
 	public Dictionary<string, CaseHandler> neighbours = new Dictionary<string, CaseHandler>();
 
 	// Use this for initialization
@@ -30,34 +31,38 @@ public class CaseHandler : MonoBehaviour {
 		caracs.Add ("Heat", 50);
 		caracs.Add ("Humidity", 50);
 		caracs.Add ("Grad_Heat", 0);
+
+		specialProperties.Add ("Cloud", false);
+		specialProperties.Add ("Day&NightEffects", true);
+		StartCoroutine (CloudTest ());
+		StartCoroutine (HeatMovement ());
 	}
 
 	/*public void test(){
-		foreach (CaseHandler ca in myHandler.myCases.Values) {
-			ca.myAnim.CrossFade ("Water", 0f);
-			ca.SynchroParams ();
-		}
-		myGround.myAnim.CrossFade ("Organism",0f);
+		foreach (CaseHandler ca in myHandler.myCases.Values)
+			ca.ChangeParam ("Humidity", 30);
 	}*/
 
-	public void RecomputeHeat(){
-		if (!supertype.Contains ("Heat")) {
-			int result = 0;
-			foreach (CaseHandler neigh in neighbours.Values) {
-				int val = neigh.caracs ["Heat"];
-				if (val >= 50)
-					result += Mathf.Max (val - caracs ["Grad_Heat"], 50);
-				else
-					result += Mathf.Min (val + caracs ["Grad_Heat"], 50);
-			}
-			result = Mathf.RoundToInt ( result*1f / neighbours.Count );
-			if (result != caracs ["Heat"]) {
-				caracs ["Heat"] = result;
-				foreach (CaseHandler neigh in neighbours.Values)
-					neigh.RecomputeHeat ();
-			}
+	public IEnumerator HeatMovement(){
+		yield return new WaitForSeconds (5);
+		StartCoroutine (HeatMovement ());
+		int loss = Mathf.RoundToInt ((caracs ["Heat"] - 50) / 2f);
+		int neighGain = Mathf.RoundToInt ((float)loss / neighbours.Count);
+		int realGain = 0;
+		foreach (CaseHandler neigh in neighbours.Values) {
+			realGain = (int)Mathf.Sign (neighGain) * Mathf.Max ((Mathf.Abs (neighGain) - neigh.caracs ["Grad_Heat"]), 0);
+			neigh.caracs ["Heat"] += realGain;
+			caracs ["Heat"] -= realGain;
+			neigh.SynchroParams ();
 		}
 		SynchroParams ();
+	}
+
+	public IEnumerator CloudTest(){
+		yield return new WaitForSeconds (50);
+		StartCoroutine( CloudTest ());
+		if (caracs ["Humidity"] >= 80 && Random.Range (1, 101) <= 50 && !specialProperties ["Cloud"]) 
+			myHandler.NewAttribute (gameObject, "Cloud");
 	}
 
 	public void ChangeParam(string param, int value){
@@ -72,11 +77,6 @@ public class CaseHandler : MonoBehaviour {
 				ChangeParam (myCursor.cursorState, 5);
 			else
 				ChangeParam (myCursor.cursorState, -5);
-			
-			supertype.Add ("Heat");
-			foreach (CaseHandler neigh in neighbours.Values)
-				neigh.RecomputeHeat ();
-			supertype.Remove ("Heat");
 
 			SynchroParams ();
 		}

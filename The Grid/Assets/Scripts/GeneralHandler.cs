@@ -6,6 +6,8 @@ using System.Collections.Generic;
 public class GeneralHandler : MonoBehaviour {
 
 	public GameObject firstCase;
+	public GameObject firstAttribute;
+
 	public Text typeCase{ get; set;}
 	public Text caraCase{ get; set;}
 	public Text timeText{ get; set;}
@@ -50,15 +52,25 @@ public class GeneralHandler : MonoBehaviour {
 
 	}
 
+	public void NewAttribute(GameObject goal, string theType){
+		GameObject newAttr = Instantiate (firstAttribute);
+		newAttr.transform.SetParent (goal.transform);
+		newAttr.transform.localPosition = Vector3.zero;
+		if (theType == "Cloud")
+			newAttr.AddComponent<Cloud_Script> ();
+	}
+
 	public void TimeHandler(){
 		hour++;
 
-		if (isDay)
+		if (isDay) {
 			foreach (CaseHandler caseH in myCases.Values)
-				caseH.ChangeParam ("Heat", 1);
-		else
+				if (caseH.specialProperties ["Day&NightEffects"])
+					caseH.ChangeParam ("Heat", 1);
+		} else
 			foreach (CaseHandler caseH in myCases.Values)
-				caseH.ChangeParam ("Heat", -1);
+				if (caseH.specialProperties ["Day&NightEffects"])
+					caseH.ChangeParam ("Heat", -1);
 
 		if (hour == 12) {
 			hour = 0;
