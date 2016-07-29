@@ -64,10 +64,27 @@ public class GeneralHandler : MonoBehaviour {
 		newAttr.transform.SetParent (goal.transform);
 		newAttr.transform.localPosition = Vector3.zero;
 		newAttr.name = theType;
-		if (theType == "Cloud")
+		switch (theType) {
+		case "Cloud":
 			newAttr.AddComponent<Cloud_Script> ();
-		else if (theType == "Selected")
+			newAttr.layer = 10;
+			break;
+		case "Selected":
 			newAttr.GetComponent<Image>().sprite = Resources.Load<Sprite> ("Sprites/Selected");
+			break;
+		case "Fire":
+			newAttr.AddComponent<Fire_Script> ();
+			newAttr.layer = 9;
+			break;
+		case "Grass":
+			newAttr.name = "Grass";
+			newAttr.layer = 8;
+			newAttr.AddComponent<Grass_Script> ();
+			break;
+		default:
+			break;
+		}
+			
 	}
 
 	public void TimeHandler(){
@@ -96,7 +113,7 @@ public class GeneralHandler : MonoBehaviour {
 	}
 
 	public void PrintTime(){
-		string msg = "";
+		string msg = "SPEED * " + Time.timeScale + "\n";
 		if(isDay)
 			msg+="JOUR";
 		else

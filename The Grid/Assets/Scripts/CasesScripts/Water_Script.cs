@@ -9,6 +9,7 @@ public class Water_Script : MonoBehaviour {
 	void Start () {
 		myCase = gameObject.GetComponent<CaseHandler> ();
 		StartCoroutine (Humidify ());
+		StartCoroutine (Corrode ());
 		StartCoroutine (CreateOrganisms ());
 	}
 
@@ -16,13 +17,20 @@ public class Water_Script : MonoBehaviour {
 		yield return new WaitForSeconds (50);
 		StartCoroutine (Humidify ());
 		foreach (CaseHandler neigh in myCase.neighbours.Values) {
+			if (neigh.type == "Void")
+				neigh.ChangeParam ("Humidity", 10);
+		}
+	}
+
+	public IEnumerator Corrode(){
+		yield return new WaitForSeconds (10);
+		StartCoroutine (Corrode ());
+		foreach (CaseHandler neigh in myCase.neighbours.Values) {
 			if (neigh.type == "Stone") {
 				neigh.caracs ["Corrosion"] += 3;
 				if (neigh.caracs ["Corrosion"] >= 100)
 					neigh.myAnim.CrossFade ("Void", 0f);
 			}
-			else if (neigh.type == "Void")
-				neigh.ChangeParam ("Humidity", 10);
 		}
 	}
 

@@ -15,7 +15,6 @@ public class CaseHandler : MonoBehaviour {
 	public string type { get; set;}
 	public int hor{ get; set;} public int ver{ get; set;}
 	public Dictionary<string,string> descriptionBonus = new Dictionary<string,string>();
-	public List<string> supertype = new List<string>();
 
 	public Dictionary<string,int> caracs = new Dictionary<string, int> ();
 	public Dictionary<string,bool> specialProperties = new Dictionary<string, bool>();
@@ -35,8 +34,10 @@ public class CaseHandler : MonoBehaviour {
 		caracs.Add ("Grad_Heat", 0);
 
 		specialProperties.Add ("Cloud", false);
+		specialProperties.Add ("Flammable", false);
+		specialProperties.Add ("Fire", false);
 		specialProperties.Add ("Day&NightEffects", true);
-		StartCoroutine (CloudTest ());
+		StartCoroutine (AttributeTest ());
 		StartCoroutine (HeatMovement ());
 	}
 
@@ -69,16 +70,25 @@ public class CaseHandler : MonoBehaviour {
 		SynchroParams ();
 	}
 
-	public IEnumerator CloudTest(){
+	public IEnumerator AttributeTest(){
 		yield return new WaitForSeconds (50);
-		StartCoroutine( CloudTest ());
+		StartCoroutine( AttributeTest ());
 		if (caracs ["Humidity"] >= 80 && Random.Range (1, 101) <= 50 && !specialProperties ["Cloud"]) 
 			myHandler.NewAttribute (gameObject, "Cloud");
 	}
 
+	//===============================================================================================
+
 	public void ChangeParam(string param, int value){
 		caracs [param] = Mathf.Max (Mathf.Min (caracs [param] + value, 100), 0);
 		SynchroParams ();
+		if (specialProperties["Flammable"])
+			TestFire ();
+	}
+
+	public void TestFire(){
+		if (caracs ["Humidity"] == 0 && caracs ["Heat"] == 100)
+			myHandler.NewAttribute (gameObject, "Fire");
 	}
 
 	public void BeigClicked(){
