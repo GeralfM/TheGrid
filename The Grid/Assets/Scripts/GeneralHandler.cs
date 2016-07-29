@@ -33,16 +33,7 @@ public class GeneralHandler : MonoBehaviour {
 				myCases.Add (i + "" + j, newCase.GetComponent<CaseHandler>());
 			}
 		}
-		for (int i = 0; i < 12; i++) {
-			for (int j = 0; j < 8; j++) {
-				for (int k = -1; k < 2; k ++)
-					for (int m = -1; m < 2; m ++) {
-						if ((k + m) % 2 != 0 && myCases.ContainsKey ((i + k).ToString () + (j + m).ToString ()))
-							myCases [i + "" + j].neighbours.Add (k + "" + m, 
-								myCases [(i + k).ToString () + (j + m).ToString ()]);
-					}
-			}
-		}
+		SetNeighbours ();
 			
 		typeCase = GameObject.Find ("NameType").GetComponent<Text> ();
 		caraCase = GameObject.Find ("NameCaracs").GetComponent<Text> ();
@@ -52,12 +43,31 @@ public class GeneralHandler : MonoBehaviour {
 
 	}
 
+	public void SetNeighbours(){
+
+		for (int i = 0; i < 12; i++) {
+			for (int j = 0; j < 8; j++) {
+				myCases [i + "" + j].neighbours = new Dictionary<string, CaseHandler> ();
+				for (int k = -1; k < 2; k ++)
+					for (int m = -1; m < 2; m ++) {
+						if ((k + m) % 2 != 0 && myCases.ContainsKey ((i + k).ToString () + (j + m).ToString ()))
+							myCases [i + "" + j].neighbours.Add (k + "" + m, 
+								myCases [(i + k).ToString () + (j + m).ToString ()]);
+					}
+			}
+		}
+
+	}
+
 	public void NewAttribute(GameObject goal, string theType){
 		GameObject newAttr = Instantiate (firstAttribute);
 		newAttr.transform.SetParent (goal.transform);
 		newAttr.transform.localPosition = Vector3.zero;
+		newAttr.name = theType;
 		if (theType == "Cloud")
 			newAttr.AddComponent<Cloud_Script> ();
+		else if (theType == "Selected")
+			newAttr.GetComponent<Image>().sprite = Resources.Load<Sprite> ("Sprites/Selected");
 	}
 
 	public void TimeHandler(){
@@ -107,6 +117,8 @@ public class GeneralHandler : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+		if (Input.GetKeyDown (KeyCode.T))
+			foreach (CaseHandler caseH in myCases.Values)
+				caseH.PrintHeat();
 	}
 }

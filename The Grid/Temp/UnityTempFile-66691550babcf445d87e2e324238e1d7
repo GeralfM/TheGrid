@@ -81,6 +81,7 @@
 'Assets/Scripts/CaseHandler.cs'
 'Assets/Scripts/CasesScripts/Cloud_Script.cs'
 'Assets/Scripts/CasesScripts/Organism_Script.cs'
+'Assets/Scripts/CasesScripts/Steam_Script.cs'
 'Assets/Scripts/CasesScripts/Stone_Script.cs'
 'Assets/Scripts/CasesScripts/Water_Script.cs'
 'Assets/Scripts/ChangeCase.cs'

@@ -8,13 +8,13 @@ public class Water_Script : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		myCase = gameObject.GetComponent<CaseHandler> ();
-		StartCoroutine (humidify ());
+		StartCoroutine (Humidify ());
 		StartCoroutine (CreateOrganisms ());
 	}
 
-	public IEnumerator humidify(){
-		yield return new WaitForSeconds (10);
-		StartCoroutine (humidify ());
+	public IEnumerator Humidify(){
+		yield return new WaitForSeconds (50);
+		StartCoroutine (Humidify ());
 		foreach (CaseHandler neigh in myCase.neighbours.Values) {
 			if (neigh.type == "Stone") {
 				neigh.caracs ["Corrosion"] += 3;

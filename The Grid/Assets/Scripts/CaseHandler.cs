@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 public class CaseHandler : MonoBehaviour {
 
+	public GameObject myText;
+
 	public GeneralHandler myHandler { get; set;}
 	public CursorHandler myCursor { get; set;}
 	public Animator myAnim { get; set;}
@@ -39,21 +41,30 @@ public class CaseHandler : MonoBehaviour {
 	}
 
 	/*public void test(){
-		foreach (CaseHandler ca in myHandler.myCases.Values)
-			ca.ChangeParam ("Humidity", 30);
+		specialProperties.Add ("talk",true);
 	}*/
 
 	public IEnumerator HeatMovement(){
-		yield return new WaitForSeconds (5);
+		yield return new WaitForSeconds (5f+Random.Range(-1f,1f));
 		StartCoroutine (HeatMovement ());
-		int loss = Mathf.RoundToInt ((caracs ["Heat"] - 50) / 2f);
-		int neighGain = Mathf.RoundToInt ((float)loss / neighbours.Count);
-		int realGain = 0;
-		foreach (CaseHandler neigh in neighbours.Values) {
-			realGain = (int)Mathf.Sign (neighGain) * Mathf.Max ((Mathf.Abs (neighGain) - neigh.caracs ["Grad_Heat"]), 0);
-			neigh.caracs ["Heat"] += realGain;
-			caracs ["Heat"] -= realGain;
-			neigh.SynchroParams ();
+
+		Dictionary<CaseHandler,int> division = new Dictionary<CaseHandler, int> ();
+		int sum = 0;
+		foreach (CaseHandler neigh in neighbours.Values) { 
+			int temp = Mathf.Max (caracs ["Heat"] - neigh.caracs ["Heat"], 0);
+			if (temp > 0)
+				division.Add (neigh, temp);
+			sum += temp;
+		}
+		int loss = 0;
+		if(sum>0)
+			loss = sum / division.Count / 2;
+		if (loss > 0) {
+			foreach (CaseHandler neigh in division.Keys) {
+				int gain = Mathf.Max (loss * division [neigh] / sum - neigh.caracs ["Grad_Heat"], 0);
+				neigh.ChangeParam ("Heat", gain);
+				ChangeParam ("Heat", -gain);
+			}
 		}
 		SynchroParams ();
 	}
@@ -79,12 +90,18 @@ public class CaseHandler : MonoBehaviour {
 				ChangeParam (myCursor.cursorState, -5);
 
 			SynchroParams ();
-		}
+		} else if (myCursor.cursorState == "Switch")
+			myCursor.SwitchCases (gameObject);
 	}
 
 	public void SetType(string newType){
 		type = newType;
 		gameObject.GetComponent<Image> ().sprite = Resources.Load<Sprite> ("Sprites/" + newType);
+	}
+
+	public void PrintHeat(){
+		myText.SetActive (!myText.activeSelf);
+		SynchroParams ();
 	}
 
 	public void ReturnDescription(){
@@ -99,6 +116,8 @@ public class CaseHandler : MonoBehaviour {
 			myAnim.SetInteger (param, caracs [param]);
 			myGround.myAnim.SetInteger (param, caracs [param]);
 		}
+		if(myText.activeSelf)
+			GetComponentInChildren<Text> ().text = caracs ["Heat"].ToString();
 	}
 	
 	// Update is called once per frame

@@ -49,6 +49,7 @@
      <Compile Include="Assets\Scripts\CaseHandler.cs" />
      <Compile Include="Assets\Scripts\CasesScripts\Cloud_Script.cs" />
      <Compile Include="Assets\Scripts\CasesScripts\Organism_Script.cs" />
+     <Compile Include="Assets\Scripts\CasesScripts\Steam_Script.cs" />
      <Compile Include="Assets\Scripts\CasesScripts\Stone_Script.cs" />
      <Compile Include="Assets\Scripts\CasesScripts\Water_Script.cs" />
      <Compile Include="Assets\Scripts\ChangeCase.cs" />
