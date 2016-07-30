@@ -12,7 +12,7 @@ public class Steam_Script : MonoBehaviour {
 	}
 
 	public IEnumerator Humidify(){
-		yield return new WaitForSeconds (50);
+		yield return new WaitForSeconds (50*myCase.timeM);
 		StartCoroutine (Humidify ());
 		foreach (CaseHandler neigh in myCase.neighbours.Values) {
 			neigh.ChangeParam ("Humidity", 5);

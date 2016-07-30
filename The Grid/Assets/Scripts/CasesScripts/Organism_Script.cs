@@ -23,13 +23,13 @@ public class Organism_Script : MonoBehaviour {
 	}
 
 	public IEnumerator Growth(){
-		yield return new WaitForSeconds (50);
+		yield return new WaitForSeconds (50*myGround.myCase.timeM);
 		StartCoroutine (Growth ());
 		myGround.myCase.caracs ["Organism"] = Mathf.Min (myGround.myCase.caracs ["Organism"] + 1, 10);
 	}
 
 	public IEnumerator Movement(){
-		yield return new WaitForSeconds (101);
+		yield return new WaitForSeconds (101*myGround.myCase.timeM);
 		StartCoroutine (Movement ());
 
 		Dictionary<string,int> division = new Dictionary<string, int> ();

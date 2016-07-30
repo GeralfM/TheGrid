@@ -21,7 +21,7 @@ public class Fire_Script : MonoBehaviour {
 	}
 
 	public IEnumerator Routine(){
-		yield return new WaitForSeconds (150);
+		yield return new WaitForSeconds (150*myCase.timeM);
 		StartCoroutine (Routine ());
 
 		Dictionary<int, CaseHandler> candidates = new Dictionary<int, CaseHandler> ();
@@ -39,7 +39,7 @@ public class Fire_Script : MonoBehaviour {
 	}
 
 	public IEnumerator StillHere(){
-		yield return new WaitForSeconds (5);
+		yield return new WaitForSeconds (1);
 		StartCoroutine (StillHere ());
 		if (!myCase.specialProperties["Flammable"])
 			Destroy (gameObject);

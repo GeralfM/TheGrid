@@ -43,7 +43,7 @@ public class Dirt_Script : MonoBehaviour {
 
 		if (maintain) { // grass growth
 			chrono += Time.deltaTime;
-			if (chrono >= 50f) {
+			if (chrono >= 50f*myCase.timeM) {
 				GrassAppears ();
 				chrono = 0f;
 			}

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class CursorHandler : MonoBehaviour {
 
@@ -7,6 +8,11 @@ public class CursorHandler : MonoBehaviour {
 
 	public string cursorState { get; set;}
 	public bool isLeft { get; set;}
+	public string secondaryState { get; set;}
+
+	public CaseHandler firstSelected { get; set;}
+	public List<CaseHandler> interSelected = new List<CaseHandler> ();
+	public List<CaseHandler> allSelected = new List<CaseHandler> ();
 
 	public GameObject firstCaseSelected { get; set;}
 	public Vector2 FC_anchorMax { get; set;}
@@ -19,6 +25,67 @@ public class CursorHandler : MonoBehaviour {
 		myHandler = gameObject.GetComponent<GeneralHandler> ();
 		cursorState = "none";
 	}
+
+	//=======================FOR THE SELECTION FEATURE=====================================
+
+	public void SelectCases(GameObject aCase){
+		if (cursorState == "Select") {
+			if (!Input.GetKey (KeyCode.LeftControl) && !Input.GetKey (KeyCode.RightControl)) {
+				foreach (CaseHandler old in allSelected) {
+					old.specialProperties ["Selected"] = false;
+					Destroy (old.gameObject.transform.Find ("Selected").gameObject);
+				}
+				allSelected = new List<CaseHandler> ();
+			}
+		
+			firstSelected = aCase.GetComponent<CaseHandler> ();
+			myHandler.NewAttribute (firstSelected.gameObject, "Selected");
+			interSelected.Add (firstSelected);
+		}
+	}
+	public void DragCases(bool isDragging){
+		if (cursorState == "Select") {
+			if (isDragging)
+				secondaryState = "Drag";
+			else {
+				secondaryState = null;
+				allSelected.AddRange (interSelected);
+				interSelected = new List<CaseHandler> ();
+			}
+		}
+	}
+	public void WasJustAClick(){
+		if (cursorState == "Select" && secondaryState == null) {
+			allSelected.AddRange (interSelected);
+			interSelected = new List<CaseHandler> ();
+		}
+	}
+	public void RecalculateSelected(GameObject caseOver){
+		if (cursorState == "Select" && secondaryState == "Drag") {
+
+			int i1 = firstSelected.hor;int j1 = firstSelected.ver;
+			int i2 = caseOver.GetComponent<CaseHandler>().hor; int j2 = caseOver.GetComponent<CaseHandler>().ver;
+			int mini = Mathf.Min (i1, i2); int minj = Mathf.Min (j1, j2);
+			int maxi = Mathf.Max (i1, i2); int maxj = Mathf.Max (j1, j2);
+
+			foreach (CaseHandler aCase in myHandler.myCases.Values) {
+				if (aCase.hor >= mini && aCase.hor <= maxi && aCase.ver >= minj && aCase.ver <= maxj) {
+					if (!aCase.specialProperties ["Selected"]) {
+						myHandler.NewAttribute (aCase.gameObject, "Selected");
+						interSelected.Add (aCase);
+					}
+				}
+				else if(aCase.specialProperties ["Selected"] && !allSelected.Contains(aCase)){
+					aCase.specialProperties ["Selected"] = false;
+					Destroy (aCase.gameObject.transform.Find ("Selected").gameObject);
+					interSelected.Remove (aCase);
+				}
+			}
+		}
+
+	}
+
+	//=====================================================================================
 
 	public void SwitchCases(GameObject goal){
 		if (firstCaseSelected == null) {
@@ -54,6 +121,7 @@ public class CursorHandler : MonoBehaviour {
 
 			myHandler.SetNeighbours ();
 			Destroy(firstCaseSelected.transform.Find("Selected").gameObject);
+			firstCaseSelected.GetComponent<CaseHandler> ().specialProperties ["Selected"] = false;
 
 			firstCaseSelected = null;
 		}
@@ -63,6 +131,14 @@ public class CursorHandler : MonoBehaviour {
 		if (state != "Switch" && firstCaseSelected!=null) {
 			Destroy(firstCaseSelected.transform.Find("Selected").gameObject);
 			firstCaseSelected = null;
+		}
+		if (new List<string>{ "Switch", "none" }.Contains (state) && allSelected.Count > 0) {
+			firstSelected = null;
+			foreach (CaseHandler old in allSelected) {
+				old.specialProperties ["Selected"] = false;
+				Destroy (old.gameObject.transform.Find ("Selected").gameObject);
+			}
+			allSelected = new List<CaseHandler> ();
 		}
 		cursorState = state;
 	}

@@ -32,13 +32,12 @@ public class Grass_Script : MonoBehaviour {
 		couldBurn = new List<CaseHandler> ();
 		foreach (CaseHandler neigh in myCase.neighbours.Values)
 			couldBurn.Add (neigh);
-		couldBurn.Add (myCase);
 
 		bool burning = false;
 		foreach (CaseHandler risk in couldBurn)
 			if (risk.specialProperties ["Fire"])
 				burning = true;
-		if (burning == true)
+		if (burning == true && myCase.specialProperties["Fire"]==false)
 			maintain = true;
 		else {
 			maintain = false;
@@ -55,8 +54,10 @@ public class Grass_Script : MonoBehaviour {
 	
 		if (maintain) { // grass burns
 			chrono += Time.deltaTime;
-			if (chrono >= 25f)
-				Destroy(gameObject);
+			if (chrono >= 25f*myCase.timeM) {
+				myCase.myHandler.NewAttribute(myCase.gameObject,"Fire");
+				chrono = 0f;
+			}
 		}
 
 	}

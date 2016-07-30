@@ -24,7 +24,7 @@ public class Cloud_Script : MonoBehaviour {
 			myCase.ChangeParam ("Humidity", 20);
 			Destroy (gameObject);
 		}
-		yield return new WaitForSeconds (50f);
+		yield return new WaitForSeconds (50f*myCase.timeM);
 		StartCoroutine (Routine ());
 	}
 

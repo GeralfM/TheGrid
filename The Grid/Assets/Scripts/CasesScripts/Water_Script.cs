@@ -8,13 +8,17 @@ public class Water_Script : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		myCase = gameObject.GetComponent<CaseHandler> ();
+
+		if (myCase.specialProperties ["Fire"])
+			Destroy (myCase.gameObject.transform.Find ("Fire").gameObject);
+
 		StartCoroutine (Humidify ());
 		StartCoroutine (Corrode ());
 		StartCoroutine (CreateOrganisms ());
 	}
 
 	public IEnumerator Humidify(){
-		yield return new WaitForSeconds (50);
+		yield return new WaitForSeconds (50*myCase.timeM);
 		StartCoroutine (Humidify ());
 		foreach (CaseHandler neigh in myCase.neighbours.Values) {
 			if (neigh.type == "Void")
@@ -23,7 +27,7 @@ public class Water_Script : MonoBehaviour {
 	}
 
 	public IEnumerator Corrode(){
-		yield return new WaitForSeconds (10);
+		yield return new WaitForSeconds (10*myCase.timeM);
 		StartCoroutine (Corrode ());
 		foreach (CaseHandler neigh in myCase.neighbours.Values) {
 			if (neigh.type == "Stone") {
@@ -35,7 +39,7 @@ public class Water_Script : MonoBehaviour {
 	}
 
 	public IEnumerator CreateOrganisms(){
-		yield return new WaitForSeconds (50);
+		yield return new WaitForSeconds (50*myCase.timeM);
 		StartCoroutine (CreateOrganisms ());
 		if (myCase.myGround.type == "none" && myCase.caracs ["Heat"] >= 45 
 			&& myCase.caracs ["Heat"] <= 50 && Random.Range (1, 101) <= 30)

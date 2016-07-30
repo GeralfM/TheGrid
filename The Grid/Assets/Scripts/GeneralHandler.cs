@@ -62,7 +62,9 @@ public class GeneralHandler : MonoBehaviour {
 	public void NewAttribute(GameObject goal, string theType){
 		GameObject newAttr = Instantiate (firstAttribute);
 		newAttr.transform.SetParent (goal.transform);
-		newAttr.transform.localPosition = Vector3.zero;
+		newAttr.GetComponent<RectTransform> ().offsetMax = Vector2.zero;
+		newAttr.GetComponent<RectTransform> ().offsetMin = Vector2.zero;
+		newAttr.GetComponent<RectTransform> ().localScale = Vector3.one;
 		newAttr.name = theType;
 		switch (theType) {
 		case "Cloud":
@@ -70,10 +72,12 @@ public class GeneralHandler : MonoBehaviour {
 			newAttr.layer = 10;
 			break;
 		case "Selected":
+			goal.GetComponent<CaseHandler> ().specialProperties ["Selected"] = true;
 			newAttr.GetComponent<Image>().sprite = Resources.Load<Sprite> ("Sprites/Selected");
 			break;
 		case "Fire":
 			newAttr.AddComponent<Fire_Script> ();
+			newAttr.name = "Fire";
 			newAttr.layer = 9;
 			break;
 		case "Grass":
@@ -85,6 +89,16 @@ public class GeneralHandler : MonoBehaviour {
 			break;
 		}
 			
+	}
+
+	//=====================================================================================
+
+	public void RandomizeAll(){
+		foreach (CaseHandler aCase in myCases.Values) {
+			aCase.caracs ["Heat"] = Random.Range (0, 101);
+			aCase.caracs ["Humidity"] = Random.Range (0, 101);
+			aCase.TestFire ();
+		}
 	}
 
 	public void TimeHandler(){

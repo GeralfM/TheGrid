@@ -16,6 +16,8 @@ public class CaseHandler : MonoBehaviour {
 	public int hor{ get; set;} public int ver{ get; set;}
 	public Dictionary<string,string> descriptionBonus = new Dictionary<string,string>();
 
+	public float timeM { get; set;}
+	public float timeStocked { get; set;}
 	public Dictionary<string,int> caracs = new Dictionary<string, int> ();
 	public Dictionary<string,bool> specialProperties = new Dictionary<string, bool>();
 	public Dictionary<string, CaseHandler> neighbours = new Dictionary<string, CaseHandler>();
@@ -33,10 +35,12 @@ public class CaseHandler : MonoBehaviour {
 		caracs.Add ("Humidity", 50);
 		caracs.Add ("Grad_Heat", 0);
 
+		timeM = 1f;timeStocked = 0f;
 		specialProperties.Add ("Cloud", false);
 		specialProperties.Add ("Flammable", false);
 		specialProperties.Add ("Fire", false);
 		specialProperties.Add ("Day&NightEffects", true);
+		specialProperties.Add ("Selected", false);
 		StartCoroutine (AttributeTest ());
 		StartCoroutine (HeatMovement ());
 	}
@@ -46,7 +50,7 @@ public class CaseHandler : MonoBehaviour {
 	}*/
 
 	public IEnumerator HeatMovement(){
-		yield return new WaitForSeconds (5f+Random.Range(-1f,1f));
+		yield return new WaitForSeconds (timeM*5f+Random.Range(-1f,1f));
 		StartCoroutine (HeatMovement ());
 
 		Dictionary<CaseHandler,int> division = new Dictionary<CaseHandler, int> ();
@@ -58,11 +62,11 @@ public class CaseHandler : MonoBehaviour {
 			sum += temp;
 		}
 		int loss = 0;
-		if(sum>0)
-			loss = sum / division.Count / 2;
+		if (sum > 0)
+			loss = sum / 2 / division.Count;
 		if (loss > 0) {
 			foreach (CaseHandler neigh in division.Keys) {
-				int gain = Mathf.Max (loss * division [neigh] / sum - neigh.caracs ["Grad_Heat"], 0);
+				int gain = Mathf.Max (loss * division [neigh] / sum - neigh.caracs ["Grad_Heat"] / division.Count, 0);
 				neigh.ChangeParam ("Heat", gain);
 				ChangeParam ("Heat", -gain);
 			}
@@ -71,7 +75,7 @@ public class CaseHandler : MonoBehaviour {
 	}
 
 	public IEnumerator AttributeTest(){
-		yield return new WaitForSeconds (50);
+		yield return new WaitForSeconds (50*timeM);
 		StartCoroutine( AttributeTest ());
 		if (caracs ["Humidity"] >= 80 && Random.Range (1, 101) <= 50 && !specialProperties ["Cloud"]) 
 			myHandler.NewAttribute (gameObject, "Cloud");
@@ -92,16 +96,23 @@ public class CaseHandler : MonoBehaviour {
 	}
 
 	public void BeigClicked(){
-		List<string> inter = new List<string>{ "Heat", "Humidity" };
-		if (inter.Contains (myCursor.cursorState)) {
-			if (myCursor.isLeft)
-				ChangeParam (myCursor.cursorState, 5);
-			else
-				ChangeParam (myCursor.cursorState, -5);
 
-			SynchroParams ();
-		} else if (myCursor.cursorState == "Switch")
-			myCursor.SwitchCases (gameObject);
+		List<CaseHandler> goals = new List<CaseHandler> ();
+		if (specialProperties ["Selected"] && !(myCursor.cursorState == "Select"))
+			goals.AddRange (myCursor.allSelected);
+		else
+			goals.Add (this);
+
+		foreach (CaseHandler goal in goals) {
+			if (new List<string>{ "Heat", "Humidity" }.Contains (myCursor.cursorState)) {
+				if (myCursor.isLeft)
+					goal.ChangeParam (myCursor.cursorState, 5);
+				else
+					goal.ChangeParam (myCursor.cursorState, -5);
+				SynchroParams ();
+			} else if (myCursor.cursorState == "Switch")
+				myCursor.SwitchCases (gameObject);
+		}
 	}
 
 	public void SetType(string newType){
@@ -115,7 +126,7 @@ public class CaseHandler : MonoBehaviour {
 	}
 
 	public void ReturnDescription(){
-		string descr = "Heat : " + caracs ["Heat"] + "\nHumidity : " + caracs ["Humidity"];
+		string descr = "Heat : " + caracs ["Heat"] + "\nHumidity : " + caracs ["Humidity"] + "\nSpeed : " + timeM;
 		foreach (string toAdd in descriptionBonus.Keys)
 			descr += "\n" + toAdd + " : " + caracs[descriptionBonus[toAdd]];
 		myHandler.PrintInfos (type, descr);
