@@ -85,7 +85,37 @@ public class CursorHandler : MonoBehaviour {
 
 	}
 
-	//=====================================================================================
+	//=======================FOR THE COPY==================================================
+
+	public void CopyCases(GameObject goal){
+		if (firstCaseSelected == null) {
+			firstCaseSelected = goal;
+			myHandler.NewAttribute (goal, "Selected");
+		}
+		else if(goal!=firstCaseSelected){
+			GameObject theCopy = Instantiate (firstCaseSelected);
+
+			theCopy.transform.SetParent (GameObject.Find ("Background").transform);
+			theCopy.GetComponent<RectTransform> ().anchorMax = goal.GetComponent<RectTransform> ().anchorMax;
+			theCopy.GetComponent<RectTransform> ().anchorMin = goal.GetComponent<RectTransform> ().anchorMin;
+			theCopy.GetComponent<RectTransform> ().offsetMax = Vector2.zero;
+			theCopy.GetComponent<RectTransform> ().offsetMin = Vector2.zero;
+			theCopy.GetComponent<RectTransform> ().localScale = Vector3.one;
+
+			string position = firstCaseSelected.GetComponent<CaseHandler> ().hor + "" +
+				firstCaseSelected.GetComponent<CaseHandler> ().ver;
+			myHandler.myCases [position] = theCopy.GetComponent<CaseHandler>();
+
+			Destroy(goal);
+			myHandler.SetNeighbours ();
+			Destroy(firstCaseSelected.transform.Find("Selected").gameObject);
+			firstCaseSelected.GetComponent<CaseHandler> ().specialProperties ["Selected"] = false;
+
+			firstCaseSelected = null;
+		} // Ca fait n'importe quoi... on va se calmer...
+	}
+
+	//=======================FOR THE SWITCH==================================================
 
 	public void SwitchCases(GameObject goal){
 		if (firstCaseSelected == null) {
@@ -128,11 +158,11 @@ public class CursorHandler : MonoBehaviour {
 	}
 
 	public void SetState(string state){
-		if (state != "Switch" && firstCaseSelected!=null) {
+		if ((state != "Switch" || state != "Copy") && firstCaseSelected!=null) {
 			Destroy(firstCaseSelected.transform.Find("Selected").gameObject);
 			firstCaseSelected = null;
 		}
-		if (new List<string>{ "Switch", "none" }.Contains (state) && allSelected.Count > 0) {
+		if (new List<string>{ "Switch", "Copy", "none" }.Contains (state) && allSelected.Count > 0) {
 			firstSelected = null;
 			foreach (CaseHandler old in allSelected) {
 				old.specialProperties ["Selected"] = false;

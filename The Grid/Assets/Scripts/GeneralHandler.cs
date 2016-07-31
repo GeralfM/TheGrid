@@ -72,8 +72,11 @@ public class GeneralHandler : MonoBehaviour {
 			newAttr.layer = 10;
 			break;
 		case "Selected":
-			goal.GetComponent<CaseHandler> ().specialProperties ["Selected"] = true;
-			newAttr.GetComponent<Image>().sprite = Resources.Load<Sprite> ("Sprites/Selected");
+			if (goal.GetComponent<CaseHandler> ().specialProperties ["Selected"] == false) {
+				goal.GetComponent<CaseHandler> ().specialProperties ["Selected"] = true;
+				newAttr.GetComponent<Image> ().sprite = Resources.Load<Sprite> ("Sprites/Selected");
+			} else
+				Destroy (newAttr);
 			break;
 		case "Fire":
 			newAttr.AddComponent<Fire_Script> ();
@@ -98,6 +101,7 @@ public class GeneralHandler : MonoBehaviour {
 			aCase.caracs ["Heat"] = Random.Range (0, 101);
 			aCase.caracs ["Humidity"] = Random.Range (0, 101);
 			aCase.TestFire ();
+			aCase.SynchroParams ();
 		}
 	}
 
@@ -150,6 +154,12 @@ public class GeneralHandler : MonoBehaviour {
 	void Update () {
 		if (Input.GetKeyDown (KeyCode.T))
 			foreach (CaseHandler caseH in myCases.Values)
-				caseH.PrintHeat();
+				caseH.PrintCarac("Heat");
+		if (Input.GetKeyDown (KeyCode.H))
+			foreach (CaseHandler caseH in myCases.Values)
+				caseH.PrintCarac("Humidity");
+		if (Input.GetKeyDown (KeyCode.V))
+			foreach (CaseHandler caseH in myCases.Values)
+				caseH.PrintCarac("Speed");
 	}
 }

@@ -52,7 +52,7 @@ public class Grass_Script : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	
-		if (maintain) { // grass burns
+		if (maintain && !myCase.specialProperties ["Paused"]) { // grass burns
 			chrono += Time.deltaTime;
 			if (chrono >= 25f*myCase.timeM) {
 				myCase.myHandler.NewAttribute(myCase.gameObject,"Fire");

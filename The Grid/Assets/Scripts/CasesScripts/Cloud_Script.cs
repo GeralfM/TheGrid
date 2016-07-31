@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Cloud_Script : MonoBehaviour {
 
@@ -19,7 +20,8 @@ public class Cloud_Script : MonoBehaviour {
 	}
 
 	public IEnumerator Routine(){
-		if (Random.Range (1, 101) <= Mathf.Min ((120 - myCase.caracs ["Humidity"]), 100)) {
+		if (Random.Range (1, 101) <=
+			Mathf.Min ((120 - myCase.caracs ["Humidity"]), 100) && !myCase.specialProperties["Paused"]) {
 			yield return new WaitForSeconds (1f);
 			myCase.ChangeParam ("Humidity", 20);
 			Destroy (gameObject);
@@ -32,6 +34,7 @@ public class Cloud_Script : MonoBehaviour {
 		myCase.specialProperties ["Cloud"] = false;
 		myCase.specialProperties ["Day&NightEffects"] = true;
 	}
+		
 	
 	// Update is called once per frame
 	void Update () {

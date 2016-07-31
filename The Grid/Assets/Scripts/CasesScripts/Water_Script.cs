@@ -20,30 +20,43 @@ public class Water_Script : MonoBehaviour {
 	public IEnumerator Humidify(){
 		yield return new WaitForSeconds (50*myCase.timeM);
 		StartCoroutine (Humidify ());
-		foreach (CaseHandler neigh in myCase.neighbours.Values) {
-			if (neigh.type == "Void")
-				neigh.ChangeParam ("Humidity", 10);
+		if (!myCase.specialProperties ["Paused"]) {
+			
+			foreach (CaseHandler neigh in myCase.neighbours.Values) {
+				if (neigh.type == "Void")
+					neigh.ChangeParam ("Humidity", 10);
+			}
+
 		}
 	}
 
 	public IEnumerator Corrode(){
 		yield return new WaitForSeconds (10*myCase.timeM);
 		StartCoroutine (Corrode ());
-		foreach (CaseHandler neigh in myCase.neighbours.Values) {
-			if (neigh.type == "Stone") {
-				neigh.caracs ["Corrosion"] += 3;
-				if (neigh.caracs ["Corrosion"] >= 100)
-					neigh.myAnim.CrossFade ("Void", 0f);
+
+		if (!myCase.specialProperties ["Paused"]) {
+
+			foreach (CaseHandler neigh in myCase.neighbours.Values) {
+				if (neigh.type == "Stone") {
+					neigh.caracs ["Corrosion"] += 3;
+					if (neigh.caracs ["Corrosion"] >= 100)
+						neigh.myAnim.CrossFade ("Void", 0f);
+				}
 			}
+
 		}
 	}
 
 	public IEnumerator CreateOrganisms(){
 		yield return new WaitForSeconds (50*myCase.timeM);
 		StartCoroutine (CreateOrganisms ());
-		if (myCase.myGround.type == "none" && myCase.caracs ["Heat"] >= 45 
-			&& myCase.caracs ["Heat"] <= 50 && Random.Range (1, 101) <= 30)
-			myCase.myGround.myAnim.CrossFade ("Organism", 0f);
+		if (!myCase.specialProperties ["Paused"]) {
+			
+			if (myCase.myGround.type == "none" && myCase.caracs ["Heat"] >= 45
+			   && myCase.caracs ["Heat"] <= 50 && Random.Range (1, 101) <= 30)
+				myCase.myGround.myAnim.CrossFade ("Organism", 0f);
+			
+		}
 	}
 
 	void OnDestroy(){

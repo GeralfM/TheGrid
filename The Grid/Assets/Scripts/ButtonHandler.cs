@@ -34,24 +34,22 @@ public class ButtonHandler : MonoBehaviour {
 
 	public void HandleObjectTime(List<CaseHandler> goals){
 		foreach (CaseHandler aCase in goals) {
-			if (gameObject.name == "ButtonBackward")
+			if (gameObject.name == "ButtonBackward" && aCase.timeM <= 100f)
 				aCase.timeM = aCase.timeM * 2f;
-			else if (gameObject.name == "ButtonForward")
+			else if (gameObject.name == "ButtonForward" )
 				aCase.timeM = aCase.timeM / 2f;
 			else if (gameObject.name == "ButtonPlay") {
-				if (aCase.timeStocked == 0f) {
-					aCase.timeStocked = aCase.timeM;
-					aCase.timeM = Mathf.Infinity;
-				} else {
-					aCase.timeM = aCase.timeStocked;
-					aCase.timeStocked = 0f;
-				}
+				if (aCase.specialProperties ["Paused"])
+					aCase.specialProperties ["Paused"] = false;
+				else
+					aCase.specialProperties ["Paused"] = true;
 			}
+			aCase.SynchroParams ();
 		}
 	}
 
 	public void HandleTime(){
-		if (gameObject.name == "ButtonBackward")
+		if (gameObject.name == "ButtonBackward" && Time.timeScale >= 0.01f)
 			Time.timeScale = Time.timeScale / 2f;
 		else if (gameObject.name == "ButtonForward")
 			Time.timeScale = Time.timeScale * 2f;

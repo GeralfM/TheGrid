@@ -41,7 +41,7 @@ public class Dirt_Script : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		if (maintain) { // grass growth
+		if (maintain && !myCase.specialProperties["Paused"]) { // grass growth
 			chrono += Time.deltaTime;
 			if (chrono >= 50f*myCase.timeM) {
 				GrassAppears ();
