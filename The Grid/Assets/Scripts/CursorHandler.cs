@@ -93,26 +93,27 @@ public class CursorHandler : MonoBehaviour {
 			myHandler.NewAttribute (goal, "Selected");
 		}
 		else if(goal!=firstCaseSelected){
-			GameObject theCopy = Instantiate (firstCaseSelected);
 
-			theCopy.transform.SetParent (GameObject.Find ("Background").transform);
-			theCopy.GetComponent<RectTransform> ().anchorMax = goal.GetComponent<RectTransform> ().anchorMax;
-			theCopy.GetComponent<RectTransform> ().anchorMin = goal.GetComponent<RectTransform> ().anchorMin;
-			theCopy.GetComponent<RectTransform> ().offsetMax = Vector2.zero;
-			theCopy.GetComponent<RectTransform> ().offsetMin = Vector2.zero;
-			theCopy.GetComponent<RectTransform> ().localScale = Vector3.one;
+			for (int i = 0; i < goal.transform.childCount; i++)
+				if (new List<string>{ "Cloud" }.Contains (goal.transform.GetChild (i).gameObject.name)) 
+					Destroy (goal.transform.GetChild (i).gameObject);
+			
+			CaseHandler goalCase = goal.GetComponent<CaseHandler> ();
+			CaseHandler firstCase = firstCaseSelected.GetComponent<CaseHandler> ();
+			foreach (string carac in firstCase.caracs.Keys)
+				goalCase.caracs [carac] = firstCase.caracs [carac];
+			if (goalCase.type != firstCase.type)
+				goalCase.myAnim.CrossFade (firstCase.type, 0f);		
 
-			string position = firstCaseSelected.GetComponent<CaseHandler> ().hor + "" +
-				firstCaseSelected.GetComponent<CaseHandler> ().ver;
-			myHandler.myCases [position] = theCopy.GetComponent<CaseHandler>();
-
-			Destroy(goal);
-			myHandler.SetNeighbours ();
 			Destroy(firstCaseSelected.transform.Find("Selected").gameObject);
-			firstCaseSelected.GetComponent<CaseHandler> ().specialProperties ["Selected"] = false;
 
+			for (int i = 0; i < firstCaseSelected.transform.childCount; i++)
+				if (new List<string>{ "Cloud", "Grass" }.Contains (firstCaseSelected.transform.GetChild (i).gameObject.name))
+					myHandler.NewAttribute (goal, firstCaseSelected.transform.GetChild (i).gameObject.name);
+
+			firstCaseSelected.GetComponent<CaseHandler> ().specialProperties ["Selected"] = false;
 			firstCaseSelected = null;
-		} // Ca fait n'importe quoi... on va se calmer...
+		} 
 	}
 
 	//=======================FOR THE SWITCH==================================================
@@ -175,9 +176,9 @@ public class CursorHandler : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		if(Input.GetMouseButtonDown(0))
+		if(Input.GetMouseButtonDown(0) || Input.GetAxis("Mouse ScrollWheel") > 0f)
 			isLeft=true;
-		if(Input.GetMouseButtonDown(1))
+		if(Input.GetMouseButtonDown(1) || Input.GetAxis("Mouse ScrollWheel") < 0f)
 			isLeft=false;
 	}
 }

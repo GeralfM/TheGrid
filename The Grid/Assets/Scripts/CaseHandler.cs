@@ -38,12 +38,13 @@ public class CaseHandler : MonoBehaviour {
 
 		timeM = 1f;
 		specialProperties.Add ("Cloud", false);
+		specialProperties.Add ("Grass", false);
 		specialProperties.Add ("Flammable", false);
 		specialProperties.Add ("Fire", false);
 		specialProperties.Add ("Day&NightEffects", true);
 		specialProperties.Add ("Paused", false);
 		specialProperties.Add ("PointerOver", false);
-		specialProperties.Add ("Selected", false);
+		specialProperties.Add ("Selected", false); //to simplify
 
 		StartCoroutine (AttributeTest ());
 		StartCoroutine (HeatMovement ());
@@ -101,6 +102,11 @@ public class CaseHandler : MonoBehaviour {
 	public void TestFire(){
 		if (caracs ["Humidity"] == 0 && caracs ["Heat"] == 100)
 			myHandler.NewAttribute (gameObject, "Fire");
+	}
+
+	public void BeingScrolled(){
+		if (new List<string>{ "Heat", "Humidity" }.Contains (myCursor.cursorState))
+			BeigClicked ();
 	}
 
 	public void BeigClicked(){

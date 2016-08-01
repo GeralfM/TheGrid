@@ -5,18 +5,41 @@ using System.Collections.Generic;
 
 public class GeneralHandler : MonoBehaviour {
 
+	public GameObject menu;
 	public GameObject firstCase;
 	public GameObject firstAttribute;
 
 	public Text typeCase{ get; set;}
 	public Text caraCase{ get; set;}
 	public Text timeText{ get; set;}
+	public bool copyAuthorized{ get; set;}
 	public Dictionary<string,CaseHandler> myCases = new Dictionary<string, CaseHandler>(); 
 
 	public bool isDay { get; set;}
 	public int hour { get; set;}
 
 	void Awake () {
+		CreateNewGrid ();
+		copyAuthorized = false;
+	}
+
+	public void StartAgain(){
+		foreach (CaseHandler aCase in myCases.Values)
+			Destroy (aCase.gameObject);
+		myCases = new Dictionary<string, CaseHandler>();
+		CreateNewGrid ();
+		GameObject.Find ("ButtonCopy").GetComponent<Image> ().enabled = copyAuthorized;
+
+		foreach (string str in 
+			new List<string>{"ButtonSelect","ButtonHeat","ButtonHumidity","ButtonSwitch","ButtonCopy"})
+			GameObject.Find (str).GetComponent<ButtonHandler> ().SetSelected (false);
+		gameObject.GetComponent<CursorHandler> ().SetState ("none");
+
+		isDay = true;
+		hour = 0;
+	}
+
+	public void CreateNewGrid(){
 
 		isDay = true; hour = 0;
 
@@ -26,6 +49,8 @@ public class GeneralHandler : MonoBehaviour {
 				newCase.transform.SetParent (GameObject.Find ("Background").transform);
 				newCase.GetComponent<RectTransform> ().anchorMin = new Vector2 (i / 13f, j / 9f);
 				newCase.GetComponent<RectTransform> ().anchorMax = new Vector2 ((i + 1) / 13f, (j + 1) / 9f);
+				newCase.GetComponent<RectTransform> ().offsetMin = Vector2.zero;
+				newCase.GetComponent<RectTransform> ().offsetMax = Vector2.zero;
 				newCase.GetComponent<RectTransform> ().localScale = new Vector3 (1, 1, 1);
 				newCase.GetComponent<CaseHandler> ().hor = i;
 				newCase.GetComponent<CaseHandler> ().ver = j;
@@ -34,7 +59,7 @@ public class GeneralHandler : MonoBehaviour {
 			}
 		}
 		SetNeighbours ();
-			
+
 		typeCase = GameObject.Find ("NameType").GetComponent<Text> ();
 		caraCase = GameObject.Find ("NameCaracs").GetComponent<Text> ();
 		timeText = GameObject.Find ("NameTime").GetComponent<Text> ();
@@ -145,6 +170,18 @@ public class GeneralHandler : MonoBehaviour {
 		caraCase.text = descr;
 	}
 
+	public void DisplayMenu(){
+		menu.SetActive (!menu.activeSelf);
+	}
+
+	public void SetCopyAuthorization(){
+		copyAuthorized = !copyAuthorized;
+	}
+
+	public void Quit(){
+		Application.Quit ();
+	}
+
 	// Use this for initialization
 	void Start () {
 	
@@ -161,5 +198,7 @@ public class GeneralHandler : MonoBehaviour {
 		if (Input.GetKeyDown (KeyCode.V))
 			foreach (CaseHandler caseH in myCases.Values)
 				caseH.PrintCarac("Speed");
+		if (Input.GetKeyDown (KeyCode.Escape))
+			DisplayMenu();
 	}
 }

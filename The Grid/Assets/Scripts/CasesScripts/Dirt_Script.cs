@@ -11,7 +11,6 @@ public class Dirt_Script : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		myCase = gameObject.GetComponent<CaseHandler> ();
-		myCase.specialProperties.Add ("Grass", false);
 		maintain = false;
 		chrono = 0;
 		StartCoroutine (IsGrass ());
@@ -34,8 +33,7 @@ public class Dirt_Script : MonoBehaviour {
 
 	void OnDestroy(){
 		if (myCase.specialProperties ["Grass"])
-			Destroy (gameObject.transform.Find ("Grass"));
-		myCase.specialProperties.Remove ("Grass");
+			Destroy (gameObject.transform.Find ("Grass").gameObject);
 	}
 
 	// Update is called once per frame
