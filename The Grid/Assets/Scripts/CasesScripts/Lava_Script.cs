@@ -1,30 +1,22 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Fire_Script : MonoBehaviour {
+public class Lava_Script : MonoBehaviour {
 
 	public CaseHandler myCase{ get; set;}
-	//public List<string> fromTypes = new List<string>{ "Void", "Steam", "Stone" };
 
 	// Use this for initialization
 	void Start () {
-		myCase = gameObject.transform.parent.gameObject.GetComponent<CaseHandler>();
-		myCase.specialProperties ["Fire"] = true;
-
-		gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite> ("Sprites/Fire");
-		gameObject.GetComponent<Image> ().color = new Color (1, 1, 1, 0.75f);
-
+		myCase = gameObject.GetComponent<CaseHandler> ();
 		StartCoroutine (Routine ());
-		StartCoroutine (StillHere ());
 	}
 
 	public IEnumerator Routine(){
 		yield return new WaitForSeconds (150*myCase.timeM+Random.Range(-1f,1f));
 		StartCoroutine (Routine ());
 		if (!myCase.specialProperties ["Paused"]) {
-			
+
 			Dictionary<int, CaseHandler> candidates = new Dictionary<int, CaseHandler> ();
 			int i = 0;
 			foreach (CaseHandler neigh in myCase.neighbours.Values) {
@@ -39,17 +31,6 @@ public class Fire_Script : MonoBehaviour {
 			}
 
 		}
-	}
-
-	public IEnumerator StillHere(){
-		yield return new WaitForSeconds (1);
-		StartCoroutine (StillHere ());
-		if (!myCase.specialProperties["Flammable"])
-			Destroy (gameObject);
-	}
-
-	void OnDestroy(){
-		myCase.specialProperties ["Fire"] = false;
 	}
 
 	// Update is called once per frame

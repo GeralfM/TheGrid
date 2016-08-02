@@ -100,7 +100,7 @@ public class CaseHandler : MonoBehaviour {
 	}
 
 	public void TestFire(){
-		if (caracs ["Humidity"] == 0 && caracs ["Heat"] == 100)
+		if (caracs ["Humidity"] == 0 && caracs ["Heat"] == 100 && !specialProperties["Fire"])
 			myHandler.NewAttribute (gameObject, "Fire");
 	}
 

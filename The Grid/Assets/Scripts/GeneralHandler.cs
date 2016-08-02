@@ -21,6 +21,8 @@ public class GeneralHandler : MonoBehaviour {
 	void Awake () {
 		CreateNewGrid ();
 		copyAuthorized = false;
+		PrintTime ();
+		StartCoroutine (Horloge ());
 	}
 
 	public void StartAgain(){
@@ -63,8 +65,6 @@ public class GeneralHandler : MonoBehaviour {
 		typeCase = GameObject.Find ("NameType").GetComponent<Text> ();
 		caraCase = GameObject.Find ("NameCaracs").GetComponent<Text> ();
 		timeText = GameObject.Find ("NameTime").GetComponent<Text> ();
-		PrintTime ();
-		StartCoroutine (Horloge ());
 
 	}
 
