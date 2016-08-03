@@ -41,6 +41,8 @@ public class CaseHandler : MonoBehaviour {
 		specialProperties.Add ("Grass", false);
 		specialProperties.Add ("Flammable", false);
 		specialProperties.Add ("Fire", false);
+		specialProperties.Add ("42", false);
+		specialProperties.Add ("golden", false);
 		specialProperties.Add ("Day&NightEffects", true);
 		specialProperties.Add ("Paused", false);
 		specialProperties.Add ("PointerOver", false);
@@ -48,6 +50,9 @@ public class CaseHandler : MonoBehaviour {
 
 		StartCoroutine (AttributeTest ());
 		StartCoroutine (HeatMovement ());
+		if (myHandler.properties ["cataclysmsAuthorized"])
+			StartCoroutine (DisasterTest ());
+		StartCoroutine (SoGoldMuchWow ());
 	}
 
 	public IEnumerator HeatMovement(){
@@ -79,7 +84,28 @@ public class CaseHandler : MonoBehaviour {
 		}
 	}
 
-	public IEnumerator AttributeTest(){
+	public IEnumerator DisasterTest(){
+		yield return new WaitForSeconds (50*timeM+Random.Range(-1f,1f));
+		StartCoroutine( DisasterTest ());
+		if (!specialProperties ["Paused"]) {
+			
+			if (Random.Range (0f, 1f) <= 0.0017f && new List<string>(){"Void","Water","Stone","Dirt"}.Contains(type)){
+				int intensity = Random.Range (0, 3);
+				List<CaseHandler> goals = myHandler.GetAllNeighbours (this, intensity);
+				foreach (CaseHandler aCase in goals) {
+					if (type == "Void")
+						aCase.TransitionWithParams ("Steam", 90, 95);
+					else if (type == "Water")
+						aCase.TransitionWithParams ("Water", -1, -1);
+					else if (type == "Stone" || type == "Dirt")
+						aCase.TransitionWithParams ("Lava", -1, 98);
+				}
+			}
+
+		}
+	}
+
+	public IEnumerator AttributeTest(){ 
 		yield return new WaitForSeconds (50*timeM);
 		StartCoroutine( AttributeTest ());
 		if (!specialProperties ["Paused"]) {
@@ -90,13 +116,34 @@ public class CaseHandler : MonoBehaviour {
 		}
 	}
 
-	//===============================================================================================
+	//=======================MINOR FUNCTIONS====================================================
 
 	public void ChangeParam(string param, int value){
 		caracs [param] = Mathf.Max (Mathf.Min (caracs [param] + value, 100), 0);
 		SynchroParams ();
 		if (specialProperties["Flammable"])
 			TestFire ();
+		specialProperties ["42"] = (caracs ["Heat"] == 42 && caracs ["Humidity"] == 42);
+	}
+
+	public IEnumerator SoGoldMuchWow(){
+		yield return new WaitForSeconds (0.5f);
+		StartCoroutine (SoGoldMuchWow ());
+		if (specialProperties ["42"]) {
+			if (specialProperties ["golden"])
+				gameObject.GetComponent<Image> ().color = new Color (212 / 255f, 175 / 255f, 55 / 255f);
+			else
+				gameObject.GetComponent<Image> ().color = new Color (255f, 255f, 255f);
+			specialProperties ["golden"] = !specialProperties ["golden"];
+		} else gameObject.GetComponent<Image> ().color = new Color (255f, 255f, 255f);
+	}
+
+	public void TransitionWithParams(string typeGoal, int hum, int heat){
+		if (hum != -1)
+			ChangeParam ("Humidity", hum - caracs ["Humidity"]);
+		if (heat != -1)
+			ChangeParam ("Heat", heat - caracs ["Heat"]);
+		myAnim.CrossFade (typeGoal, 0f);
 	}
 
 	public void TestFire(){
@@ -141,12 +188,18 @@ public class CaseHandler : MonoBehaviour {
 		{
 		case "Heat":
 			myHeat.SetActive (!myHeat.activeSelf);
+			myHum.SetActive (false);
+			myVit.SetActive (false);
 			break;
 		case "Humidity":
 			myHum.SetActive (!myHum.activeSelf);
+			myHeat.SetActive (false);
+			myVit.SetActive (false);
 			break;
 		case "Speed":
 			myVit.SetActive (!myVit.activeSelf);
+			myHeat.SetActive (false);
+			myHum.SetActive (false);
 			break;
 		default:
 			break;
@@ -170,15 +223,24 @@ public class CaseHandler : MonoBehaviour {
 			myAnim.SetInteger (param, caracs [param]);
 			myGround.myAnim.SetInteger (param, caracs [param]);
 		}
-		if(myHeat.activeSelf)
-			transform.Find("HeatText").gameObject.GetComponent<Text> ().text = caracs ["Heat"].ToString();
-		if(myHum.activeSelf)
-			transform.Find("HumText").gameObject.GetComponent<Text> ().text = caracs ["Humidity"].ToString();
+		if (myHeat.activeSelf) {
+			float rate = caracs ["Heat"] / 100f;
+			float R = Mathf.Min (1, 2 * rate);
+			float G = 1 - 2 * Mathf.Abs (0.5f - rate);
+			float B = Mathf.Min (1, 2 - 2 * rate);
+			transform.Find ("Heat").Find ("Text").gameObject.GetComponent<Text> ().text = caracs ["Heat"].ToString ();
+			transform.Find ("Heat").gameObject.GetComponent<Image> ().color = new Color (R, G, B);
+		}
+		if (myHum.activeSelf) {
+			float rate = caracs ["Humidity"] / 100f;
+			transform.Find ("Hum").Find ("Text").gameObject.GetComponent<Text> ().text = caracs ["Humidity"].ToString ();
+			transform.Find ("Hum").gameObject.GetComponent<Image> ().color = new Color (1 - rate, 1 - rate, 1);
+		}
 		if (myVit.activeSelf) {
 			if (specialProperties ["Paused"])
-				transform.Find ("VitText").gameObject.GetComponent<Text> ().text = "0";
+				transform.Find("Vit").Find("Text").gameObject.GetComponent<Text> ().text = "0";
 			else
-				transform.Find ("VitText").gameObject.GetComponent<Text> ().text = (1f / timeM).ToString ();
+				transform.Find("Vit").Find("Text").gameObject.GetComponent<Text> ().text = (1f / timeM).ToString ();
 		}
 	}
 

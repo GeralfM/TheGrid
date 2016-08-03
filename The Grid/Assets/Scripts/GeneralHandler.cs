@@ -12,15 +12,30 @@ public class GeneralHandler : MonoBehaviour {
 	public Text typeCase{ get; set;}
 	public Text caraCase{ get; set;}
 	public Text timeText{ get; set;}
+	public Dictionary<string,bool> properties = new Dictionary<string, bool> ();
 	public bool copyAuthorized{ get; set;}
 	public Dictionary<string,CaseHandler> myCases = new Dictionary<string, CaseHandler>(); 
+
+	private Dictionary<string,int> orderDisplayed = new Dictionary<string,int>();
 
 	public bool isDay { get; set;}
 	public int hour { get; set;}
 
 	void Awake () {
+		properties.Add ("copyAuthorized", false);
+		properties.Add ("cataclysmsAuthorized", true);
+
+		orderDisplayed.Add("OnGround",0);
+		orderDisplayed.Add("Grass",1);
+		orderDisplayed.Add("Fire",2);
+		orderDisplayed.Add("Cloud",3);
+
+		orderDisplayed.Add("Selected",4);
+		orderDisplayed.Add("Heat",4);
+		orderDisplayed.Add("Hum",4);
+		orderDisplayed.Add("Vit",4);
+
 		CreateNewGrid ();
-		copyAuthorized = false;
 		PrintTime ();
 		StartCoroutine (Horloge ());
 	}
@@ -30,7 +45,7 @@ public class GeneralHandler : MonoBehaviour {
 			Destroy (aCase.gameObject);
 		myCases = new Dictionary<string, CaseHandler>();
 		CreateNewGrid ();
-		GameObject.Find ("ButtonCopy").GetComponent<Image> ().enabled = copyAuthorized;
+		GameObject.Find ("ButtonCopy").GetComponent<Image> ().enabled = properties["copyAuthorized"];
 
 		foreach (string str in 
 			new List<string>{"ButtonSelect","ButtonHeat","ButtonHumidity","ButtonSwitch","ButtonCopy"})
@@ -49,6 +64,7 @@ public class GeneralHandler : MonoBehaviour {
 			for (int j = 0; j < 8; j++) {
 				GameObject newCase = Instantiate (firstCase);
 				newCase.transform.SetParent (GameObject.Find ("Background").transform);
+				newCase.GetComponent<Transform> ().localPosition = new Vector3 (0, 0, 0);
 				newCase.GetComponent<RectTransform> ().anchorMin = new Vector2 (i / 13f, j / 9f);
 				newCase.GetComponent<RectTransform> ().anchorMax = new Vector2 ((i + 1) / 13f, (j + 1) / 9f);
 				newCase.GetComponent<RectTransform> ().offsetMin = Vector2.zero;
@@ -90,11 +106,11 @@ public class GeneralHandler : MonoBehaviour {
 		newAttr.GetComponent<RectTransform> ().offsetMax = Vector2.zero;
 		newAttr.GetComponent<RectTransform> ().offsetMin = Vector2.zero;
 		newAttr.GetComponent<RectTransform> ().localScale = Vector3.one;
+		newAttr.GetComponent<Transform> ().localPosition = Vector3.zero;
 		newAttr.name = theType;
 		switch (theType) {
 		case "Cloud":
 			newAttr.AddComponent<Cloud_Script> ();
-			newAttr.layer = 10;
 			break;
 		case "Selected":
 			if (goal.GetComponent<CaseHandler> ().specialProperties ["Selected"] == false) {
@@ -105,18 +121,21 @@ public class GeneralHandler : MonoBehaviour {
 			break;
 		case "Fire":
 			newAttr.AddComponent<Fire_Script> ();
-			newAttr.name = "Fire";
-			newAttr.layer = 9;
 			break;
 		case "Grass":
-			newAttr.name = "Grass";
-			newAttr.layer = 8;
 			newAttr.AddComponent<Grass_Script> ();
 			break;
 		default:
 			break;
 		}
-			
+		OrganizeAttributes (goal);
+	}
+
+	public void OrganizeAttributes(GameObject goal){
+		for (int i = 0; i <= 4; i++)
+			foreach (Transform child in goal.transform)
+				if (orderDisplayed [child.gameObject.name] == i)
+					child.SetSiblingIndex (orderDisplayed [child.gameObject.name]);
 	}
 
 	//=====================================================================================
@@ -165,6 +184,25 @@ public class GeneralHandler : MonoBehaviour {
 		timeText.text = msg;
 	}
 
+	public List<CaseHandler> GetAllNeighbours(CaseHandler me, int range){
+		List<CaseHandler> answer = new List<CaseHandler> ();
+		List<CaseHandler> answerInter;
+		answer.Add (me);
+		for (int i = 0; i < range; i++) {
+			answerInter = new List<CaseHandler> ();
+			foreach (CaseHandler aCase in answer) {
+				answerInter.Add (aCase);
+				foreach (CaseHandler neigh in aCase.neighbours.Values)
+					if (!answerInter.Contains (neigh))
+						answerInter.Add (neigh);
+			}
+			foreach (CaseHandler aCase in answerInter)
+				if (!answer.Contains (aCase))
+					answer.Add (aCase);
+		}
+		return answer;
+	}
+
 	public void PrintInfos(string type, string descr){
 		typeCase.text = type;
 		caraCase.text = descr;
@@ -174,8 +212,8 @@ public class GeneralHandler : MonoBehaviour {
 		menu.SetActive (!menu.activeSelf);
 	}
 
-	public void SetCopyAuthorization(){
-		copyAuthorized = !copyAuthorized;
+	public void ChangeConfiguration(string param){
+		properties[param] = !properties[param];
 	}
 
 	public void Quit(){
@@ -194,7 +232,7 @@ public class GeneralHandler : MonoBehaviour {
 				caseH.PrintCarac("Heat");
 		if (Input.GetKeyDown (KeyCode.H))
 			foreach (CaseHandler caseH in myCases.Values)
-				caseH.PrintCarac("Humidity");
+				caseH.PrintCarac ("Humidity");
 		if (Input.GetKeyDown (KeyCode.V))
 			foreach (CaseHandler caseH in myCases.Values)
 				caseH.PrintCarac("Speed");
