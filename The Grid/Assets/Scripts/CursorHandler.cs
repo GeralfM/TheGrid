@@ -37,7 +37,6 @@ public class CursorHandler : MonoBehaviour {
 				}
 				allSelected = new List<CaseHandler> ();
 			}
-		
 			firstSelected = aCase.GetComponent<CaseHandler> ();
 			myHandler.NewAttribute (firstSelected.gameObject, "Selected");
 			interSelected.Add (firstSelected);

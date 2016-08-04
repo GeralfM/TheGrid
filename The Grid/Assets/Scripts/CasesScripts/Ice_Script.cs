@@ -8,6 +8,7 @@ public class Ice_Script : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		myCase = gameObject.GetComponent<CaseHandler> ();
+		myCase.specialProperties ["Solid"] = true;
 		StartCoroutine (Freeze ());
 	}
 

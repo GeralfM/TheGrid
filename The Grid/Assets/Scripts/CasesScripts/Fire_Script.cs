@@ -17,6 +17,7 @@ public class Fire_Script : MonoBehaviour {
 		gameObject.GetComponent<Image> ().color = new Color (1, 1, 1, 0.75f);
 
 		StartCoroutine (Routine ());
+		StartCoroutine (Drain ());
 		StartCoroutine (StillHere ());
 	}
 
@@ -35,7 +36,21 @@ public class Fire_Script : MonoBehaviour {
 			}
 			if (i > 0) {
 				int goal = Random.Range (1, i + 1);
-				candidates [goal].myHandler.NewAttribute (candidates [goal].gameObject, "Fire");
+				if (!candidates [goal].specialProperties ["Fire"])
+					candidates [goal].myHandler.NewAttribute (candidates [goal].gameObject, "Fire");
+			}
+
+		}
+	}
+
+	public IEnumerator Drain(){
+		yield return new WaitForSeconds (50*myCase.timeM);
+		StartCoroutine (Drain ());
+		if (!myCase.specialProperties ["Paused"]) {
+
+			foreach (CaseHandler neigh in myCase.neighbours.Values) {
+				neigh.ChangeParam ("Heat", 10);
+				neigh.ChangeParam ("Humidity", -10);
 			}
 
 		}

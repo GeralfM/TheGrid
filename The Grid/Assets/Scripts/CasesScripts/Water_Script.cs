@@ -9,6 +9,7 @@ public class Water_Script : MonoBehaviour {
 	void Start () {
 		myCase = gameObject.GetComponent<CaseHandler> ();
 
+		myCase.specialProperties ["Solid"] = false;
 		if (myCase.specialProperties ["Fire"])
 			Destroy (myCase.gameObject.transform.Find ("Fire").gameObject);
 

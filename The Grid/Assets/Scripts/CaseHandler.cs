@@ -7,6 +7,7 @@ public class CaseHandler : MonoBehaviour {
 
 	public GameObject myHeat;
 	public GameObject myHum;
+	public GameObject myPres;
 	public GameObject myVit;
 
 	public GeneralHandler myHandler { get; set;}
@@ -34,6 +35,7 @@ public class CaseHandler : MonoBehaviour {
 
 		caracs.Add ("Heat", 50);
 		caracs.Add ("Humidity", 50);
+		caracs.Add ("Pressure", 50);
 		caracs.Add ("Grad_Heat", 0);
 
 		timeM = 1f;
@@ -41,6 +43,7 @@ public class CaseHandler : MonoBehaviour {
 		specialProperties.Add ("Grass", false);
 		specialProperties.Add ("Flammable", false);
 		specialProperties.Add ("Fire", false);
+		specialProperties.Add ("Solid", true);
 		specialProperties.Add ("42", false);
 		specialProperties.Add ("golden", false);
 		specialProperties.Add ("Day&NightEffects", true);
@@ -50,6 +53,7 @@ public class CaseHandler : MonoBehaviour {
 
 		StartCoroutine (AttributeTest ());
 		StartCoroutine (HeatMovement ());
+		StartCoroutine (PressureMovement ());
 		if (myHandler.properties ["cataclysmsAuthorized"])
 			StartCoroutine (DisasterTest ());
 		StartCoroutine (SoGoldMuchWow ());
@@ -77,6 +81,35 @@ public class CaseHandler : MonoBehaviour {
 					int gain = Mathf.Max (loss * division [neigh] / sum - neigh.caracs ["Grad_Heat"] / division.Count, 0);
 					neigh.ChangeParam ("Heat", gain);
 					ChangeParam ("Heat", -gain);
+				}
+			}
+			SynchroParams ();
+
+		}
+	}
+
+	public IEnumerator PressureMovement(){
+		yield return new WaitForSeconds (timeM*5f+Random.Range(-1f,1f));
+		StartCoroutine (PressureMovement ());
+
+		if (!specialProperties ["Paused"] && !specialProperties["Solid"]) {
+
+			Dictionary<CaseHandler,int> division = new Dictionary<CaseHandler, int> ();
+			int sum = 0;
+			foreach (CaseHandler neigh in neighbours.Values) { 
+				int temp = Mathf.Max (caracs ["Pressure"] - neigh.caracs ["Pressure"], 0);
+				if (temp > 0)
+					division.Add (neigh, temp);
+				sum += temp;
+			}
+			int loss = 0;
+			if (sum > 0)
+				loss = sum / 2 / division.Count;
+			if (loss > 0) {
+				foreach (CaseHandler neigh in division.Keys) {
+					int gain = Mathf.Max (loss * division [neigh] / sum, 0);
+					neigh.ChangeParam ("Pressure", gain);
+					ChangeParam ("Pressure", -gain);
 				}
 			}
 			SynchroParams ();
@@ -123,7 +156,7 @@ public class CaseHandler : MonoBehaviour {
 		SynchroParams ();
 		if (specialProperties["Flammable"])
 			TestFire ();
-		specialProperties ["42"] = (caracs ["Heat"] == 42 && caracs ["Humidity"] == 42);
+		specialProperties ["42"] = (caracs ["Heat"] == 42 && caracs ["Humidity"] == 42 && caracs["Pressure"] == 42);
 	}
 
 	public IEnumerator SoGoldMuchWow(){
@@ -152,7 +185,7 @@ public class CaseHandler : MonoBehaviour {
 	}
 
 	public void BeingScrolled(){
-		if (new List<string>{ "Heat", "Humidity" }.Contains (myCursor.cursorState))
+		if (new List<string>{ "Heat", "Humidity", "Pressure" }.Contains (myCursor.cursorState))
 			BeigClicked ();
 	}
 
@@ -165,7 +198,7 @@ public class CaseHandler : MonoBehaviour {
 			goals.Add (this);
 
 		foreach (CaseHandler goal in goals) {
-			if (new List<string>{ "Heat", "Humidity" }.Contains (myCursor.cursorState)) {
+			if (new List<string>{ "Heat", "Humidity", "Pressure" }.Contains (myCursor.cursorState)) {
 				if (myCursor.isLeft)
 					goal.ChangeParam (myCursor.cursorState, 5);
 				else
@@ -188,16 +221,25 @@ public class CaseHandler : MonoBehaviour {
 		{
 		case "Heat":
 			myHeat.SetActive (!myHeat.activeSelf);
+			myPres.SetActive (false);
 			myHum.SetActive (false);
 			myVit.SetActive (false);
 			break;
 		case "Humidity":
 			myHum.SetActive (!myHum.activeSelf);
+			myPres.SetActive (false);
 			myHeat.SetActive (false);
 			myVit.SetActive (false);
 			break;
 		case "Speed":
 			myVit.SetActive (!myVit.activeSelf);
+			myPres.SetActive (false);
+			myHeat.SetActive (false);
+			myHum.SetActive (false);
+			break;
+		case "Pressure":
+			myPres.SetActive (!myPres.activeSelf);
+			myVit.SetActive (false);
 			myHeat.SetActive (false);
 			myHum.SetActive (false);
 			break;
@@ -208,7 +250,8 @@ public class CaseHandler : MonoBehaviour {
 	}
 
 	public void ReturnDescription(){
-		string descr = "Heat : " + caracs ["Heat"] + "\nHumidity : " + caracs ["Humidity"];
+		string descr = "Heat : " + caracs ["Heat"] + "\nHumidity : " +
+			caracs ["Humidity"]+ "\nPressure : " + caracs ["Pressure"];
 		if (specialProperties ["Paused"])
 			descr += "\nSpeed : Paused";
 		else
@@ -219,7 +262,7 @@ public class CaseHandler : MonoBehaviour {
 	}
 
 	public void SynchroParams(){
-		foreach (string param in new List<string>{"Heat","Humidity"}) {
+		foreach (string param in new List<string>{"Heat","Humidity", "Pressure"}) {
 			myAnim.SetInteger (param, caracs [param]);
 			myGround.myAnim.SetInteger (param, caracs [param]);
 		}
@@ -235,6 +278,11 @@ public class CaseHandler : MonoBehaviour {
 			float rate = caracs ["Humidity"] / 100f;
 			transform.Find ("Hum").Find ("Text").gameObject.GetComponent<Text> ().text = caracs ["Humidity"].ToString ();
 			transform.Find ("Hum").gameObject.GetComponent<Image> ().color = new Color (1 - rate, 1 - rate, 1);
+		}
+		if (myPres.activeSelf) {
+			float rate = caracs ["Pressure"] / 100f;
+			transform.Find ("Pres").Find ("Text").gameObject.GetComponent<Text> ().text = caracs ["Pressure"].ToString ();
+			transform.Find ("Pres").gameObject.GetComponent<Image> ().color = new Color (1, 1 - rate, 0);
 		}
 		if (myVit.activeSelf) {
 			if (specialProperties ["Paused"])

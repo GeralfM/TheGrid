@@ -9,7 +9,9 @@ public class Lava_Script : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		myCase = gameObject.GetComponent<CaseHandler> ();
+		myCase.specialProperties ["Solid"] = false;
 		StartCoroutine (Routine ());
+		StartCoroutine (Drain ());
 	}
 
 	public IEnumerator Routine(){
@@ -28,6 +30,19 @@ public class Lava_Script : MonoBehaviour {
 			if (i > 0) {
 				int goal = Random.Range (1, i + 1);
 				candidates [goal].myHandler.NewAttribute (candidates [goal].gameObject, "Fire");
+			}
+
+		}
+	}
+
+	public IEnumerator Drain(){
+		yield return new WaitForSeconds (50*myCase.timeM);
+		StartCoroutine (Drain ());
+		if (!myCase.specialProperties ["Paused"]) {
+
+			foreach (CaseHandler neigh in myCase.neighbours.Values) {
+				neigh.ChangeParam ("Heat", 20);
+				neigh.ChangeParam ("Humidity", -20);
 			}
 
 		}

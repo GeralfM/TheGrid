@@ -34,6 +34,7 @@ public class GeneralHandler : MonoBehaviour {
 		orderDisplayed.Add("Heat",4);
 		orderDisplayed.Add("Hum",4);
 		orderDisplayed.Add("Vit",4);
+		orderDisplayed.Add("Pres",4);
 
 		CreateNewGrid ();
 		PrintTime ();
@@ -101,34 +102,39 @@ public class GeneralHandler : MonoBehaviour {
 	}
 
 	public void NewAttribute(GameObject goal, string theType){
-		GameObject newAttr = Instantiate (firstAttribute);
-		newAttr.transform.SetParent (goal.transform);
-		newAttr.GetComponent<RectTransform> ().offsetMax = Vector2.zero;
-		newAttr.GetComponent<RectTransform> ().offsetMin = Vector2.zero;
-		newAttr.GetComponent<RectTransform> ().localScale = Vector3.one;
-		newAttr.GetComponent<Transform> ().localPosition = Vector3.zero;
-		newAttr.name = theType;
-		switch (theType) {
-		case "Cloud":
-			newAttr.AddComponent<Cloud_Script> ();
-			break;
-		case "Selected":
-			if (goal.GetComponent<CaseHandler> ().specialProperties ["Selected"] == false) {
-				goal.GetComponent<CaseHandler> ().specialProperties ["Selected"] = true;
-				newAttr.GetComponent<Image> ().sprite = Resources.Load<Sprite> ("Sprites/Selected");
-			} else
-				Destroy (newAttr);
-			break;
-		case "Fire":
-			newAttr.AddComponent<Fire_Script> ();
-			break;
-		case "Grass":
-			newAttr.AddComponent<Grass_Script> ();
-			break;
-		default:
-			break;
+		List<string> test = new List<string> ();
+		foreach (Transform child in goal.transform)
+			test.Add (child.gameObject.name);
+		if (!test.Contains (theType)) {
+			GameObject newAttr = Instantiate (firstAttribute);
+			newAttr.transform.SetParent (goal.transform);
+			newAttr.GetComponent<RectTransform> ().offsetMax = Vector2.zero;
+			newAttr.GetComponent<RectTransform> ().offsetMin = Vector2.zero;
+			newAttr.GetComponent<RectTransform> ().localScale = Vector3.one;
+			newAttr.GetComponent<Transform> ().localPosition = Vector3.zero;
+			newAttr.name = theType;
+			switch (theType) {
+			case "Cloud":
+				newAttr.AddComponent<Cloud_Script> ();
+				break;
+			case "Selected":
+				if (goal.GetComponent<CaseHandler> ().specialProperties ["Selected"] == false) {
+					goal.GetComponent<CaseHandler> ().specialProperties ["Selected"] = true;
+					newAttr.GetComponent<Image> ().sprite = Resources.Load<Sprite> ("Sprites/Selected");
+				} else
+					Destroy (newAttr);
+				break;
+			case "Fire":
+				newAttr.AddComponent<Fire_Script> ();
+				break;
+			case "Grass":
+				newAttr.AddComponent<Grass_Script> ();
+				break;
+			default:
+				break;
+			}
+			OrganizeAttributes (goal);
 		}
-		OrganizeAttributes (goal);
 	}
 
 	public void OrganizeAttributes(GameObject goal){
@@ -236,6 +242,9 @@ public class GeneralHandler : MonoBehaviour {
 		if (Input.GetKeyDown (KeyCode.V))
 			foreach (CaseHandler caseH in myCases.Values)
 				caseH.PrintCarac("Speed");
+		if (Input.GetKeyDown (KeyCode.P))
+			foreach (CaseHandler caseH in myCases.Values)
+				caseH.PrintCarac("Pressure");
 		if (Input.GetKeyDown (KeyCode.Escape))
 			DisplayMenu();
 	}

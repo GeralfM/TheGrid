@@ -11,6 +11,7 @@ public class Dirt_Script : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		myCase = gameObject.GetComponent<CaseHandler> ();
+		myCase.specialProperties ["Solid"] = true;
 		maintain = false;
 		chrono = 0;
 		StartCoroutine (IsGrass ());

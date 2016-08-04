@@ -14,8 +14,10 @@ public class ChangeCase : StateMachineBehaviour {
 		animator.gameObject.GetComponent<CaseHandler> ().caracs ["Grad_Heat"] = grad_heat;
 		animator.gameObject.GetComponent<CaseHandler> ().specialProperties ["Flammable"] = flammable;
 
-		if (!new List<string>{ "Void" }.Contains (nameType))
+		if (!new List<string>{ "Void" }.Contains (nameType)) {
 			animator.gameObject.AddComponent (System.Type.GetType (nameType + "_Script"));
+			animator.gameObject.GetComponent<CaseHandler> ().specialProperties ["Solid"] = true;
+		}
 	}
 
 	// OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
