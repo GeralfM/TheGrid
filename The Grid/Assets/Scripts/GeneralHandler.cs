@@ -25,8 +25,8 @@ public class GeneralHandler : MonoBehaviour {
 		properties.Add ("copyAuthorized", false);
 		properties.Add ("cataclysmsAuthorized", true);
 
-		orderDisplayed.Add("OnGround",0);
 		orderDisplayed.Add("Grass",1);
+		orderDisplayed.Add("Organism",1);
 		orderDisplayed.Add("Mushroom",2);
 		orderDisplayed.Add("Fire",3);
 		orderDisplayed.Add("Cloud",4);
@@ -102,7 +102,7 @@ public class GeneralHandler : MonoBehaviour {
 		List<string> test = new List<string> ();
 		foreach (Transform child in goal.transform)
 			test.Add (child.gameObject.name);
-		if (!test.Contains (theType)) {
+		if (!test.Contains (theType) || new List<string>{ "Organism" }.Contains (theType)) {
 			GameObject newAttr = Instantiate (firstAttribute);
 			newAttr.transform.SetParent (goal.transform);
 			newAttr.GetComponent<RectTransform> ().offsetMax = Vector2.zero;
@@ -116,29 +116,6 @@ public class GeneralHandler : MonoBehaviour {
 				goal.GetComponent<CaseHandler> ().specialProperties ["Selected"] = true;
 				newAttr.GetComponent<Image> ().sprite = Resources.Load<Sprite> ("Sprites/Selected");
 			}
-			/*switch (theType) { 
-			case "Cloud":
-				newAttr.AddComponent<Cloud_Script> ();
-				break;
-			case "Selected":
-				if (goal.GetComponent<CaseHandler> ().specialProperties ["Selected"] == false) {
-					goal.GetComponent<CaseHandler> ().specialProperties ["Selected"] = true;
-					newAttr.GetComponent<Image> ().sprite = Resources.Load<Sprite> ("Sprites/Selected");
-				} else
-					Destroy (newAttr);
-				break;
-			case "Fire":
-				newAttr.AddComponent<Fire_Script> ();
-				break;
-			case "Grass":
-				newAttr.AddComponent<Grass_Script> ();
-				break;
-			case "Mushroom":
-				newAttr.AddComponent<Mushroom_Script> ();
-				break;
-			default:
-				break;
-			}*/
 			OrganizeAttributes (goal);
 		}
 	}
@@ -147,7 +124,7 @@ public class GeneralHandler : MonoBehaviour {
 		for (int i = 0; i <= 5; i++)
 			foreach (Transform child in goal.transform)
 				if (orderDisplayed [child.gameObject.name] == i)
-					child.SetSiblingIndex (orderDisplayed [child.gameObject.name]);
+					child.SetAsLastSibling ();
 	}
 
 	//=====================================================================================

@@ -49,22 +49,22 @@ public class Water_Script : MonoBehaviour {
 	}
 
 	public IEnumerator CreateOrganisms(){
-		yield return new WaitForSeconds (50*myCase.timeM);
+		yield return new WaitForSeconds (50 * myCase.timeM + Random.Range (1f, -1f));
 		StartCoroutine (CreateOrganisms ());
 		if (!myCase.specialProperties ["Paused"]) {
-			
-			if (myCase.myGround.type == "none" && myCase.caracs ["Heat"] >= 45
-			   && myCase.caracs ["Heat"] <= 50 && Random.Range (1, 101) <= 30)
-				myCase.myGround.myAnim.CrossFade ("Organism", 0f);
+
+			if (!myCase.specialProperties ["Organism"] && myCase.caracs ["Heat"] >= 45
+				&& myCase.caracs ["Heat"] <= 50 && Random.Range (1, 101) <= 30
+			    || myCase.specialProperties ["Organism"])
+				myCase.myHandler.NewAttribute (myCase.gameObject, "Organism");
 			
 		}
 	}
 
 	void OnDestroy(){
-		if (myCase.myGround.type == "Organism") {
-			myCase.myGround.myAnim.CrossFade ("none",0f);
-			Destroy (myCase.myGround.GetComponent<Organism_Script> ());
-		}
+		foreach (Transform child in myCase.transform)
+			if (child.gameObject.name == "Organisms")
+				Destroy (child);
 	}
 
 	// Update is called once per frame

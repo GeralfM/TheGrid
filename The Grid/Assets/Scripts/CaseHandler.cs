@@ -13,7 +13,6 @@ public class CaseHandler : MonoBehaviour {
 	public GeneralHandler myHandler { get; set;}
 	public CursorHandler myCursor { get; set;}
 	public Animator myAnim { get; set;}
-	public GroundHandler myGround { get; set;}
 
 	public string type { get; set;}
 	public int hor{ get; set;} public int ver{ get; set;}
@@ -29,7 +28,6 @@ public class CaseHandler : MonoBehaviour {
 		myHandler = GameObject.Find ("MainHandler").GetComponent<GeneralHandler> ();
 		myCursor = GameObject.Find ("MainHandler").GetComponent<CursorHandler> ();
 		myAnim = gameObject.GetComponent<Animator> ();
-		myGround = gameObject.GetComponentInChildren <GroundHandler>();
 
 		type = "Void";
 
@@ -37,12 +35,14 @@ public class CaseHandler : MonoBehaviour {
 		caracs.Add ("Humidity", 50);
 		caracs.Add ("Pressure", 50);
 		caracs.Add ("Grad_Heat", 0);
+		caracs.Add ("Organisms", 0);
 
 		timeM = 1f;
 		specialProperties.Add ("Cloud", false);
 		specialProperties.Add ("Grass", false);
 		specialProperties.Add ("Flammable", false);
 		specialProperties.Add ("Fire", false);
+		specialProperties.Add ("Organism", false);
 		specialProperties.Add ("Mushroom", false);
 		specialProperties.Add ("Solid", true);
 		specialProperties.Add ("42", false);
@@ -59,6 +59,14 @@ public class CaseHandler : MonoBehaviour {
 			StartCoroutine (DisasterTest ());
 		StartCoroutine (SoGoldMuchWow ());
 	}
+
+	/*public void test(){
+		foreach (CaseHandler acase in myHandler.myCases.Values) {
+			acase.myAnim.CrossFade ("Water", 0f);
+			acase.ChangeParam ("Heat", -5);
+		}
+		myHandler.NewAttribute (gameObject, "Organism");
+	}*/
 
 	public IEnumerator HeatMovement(){
 		yield return new WaitForSeconds (timeM*5f+Random.Range(-1f,1f));
@@ -264,10 +272,9 @@ public class CaseHandler : MonoBehaviour {
 	}
 
 	public void SynchroParams(){
-		foreach (string param in new List<string>{"Heat","Humidity", "Pressure"}) {
+		foreach (string param in new List<string>{"Heat","Humidity", "Pressure"})
 			myAnim.SetInteger (param, caracs [param]);
-			myGround.myAnim.SetInteger (param, caracs [param]);
-		}
+
 		if (myHeat.activeSelf) {
 			float rate = caracs ["Heat"] / 100f;
 			float R = Mathf.Min (1, 2 * rate);
