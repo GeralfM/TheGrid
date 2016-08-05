@@ -27,14 +27,11 @@ public class GeneralHandler : MonoBehaviour {
 
 		orderDisplayed.Add("OnGround",0);
 		orderDisplayed.Add("Grass",1);
-		orderDisplayed.Add("Fire",2);
-		orderDisplayed.Add("Cloud",3);
-
-		orderDisplayed.Add("Selected",4);
-		orderDisplayed.Add("Heat",4);
-		orderDisplayed.Add("Hum",4);
-		orderDisplayed.Add("Vit",4);
-		orderDisplayed.Add("Pres",4);
+		orderDisplayed.Add("Mushroom",2);
+		orderDisplayed.Add("Fire",3);
+		orderDisplayed.Add("Cloud",4);
+		foreach(string element in new List<string>{"Selected","Heat","Hum","Vit","Pres"})
+			orderDisplayed.Add(element,5);
 
 		CreateNewGrid ();
 		PrintTime ();
@@ -113,7 +110,13 @@ public class GeneralHandler : MonoBehaviour {
 			newAttr.GetComponent<RectTransform> ().localScale = Vector3.one;
 			newAttr.GetComponent<Transform> ().localPosition = Vector3.zero;
 			newAttr.name = theType;
-			switch (theType) {
+			if (!new List<string>{ "Selected" }.Contains (theType))
+				newAttr.AddComponent (System.Type.GetType (theType + "_Script"));
+			else {
+				goal.GetComponent<CaseHandler> ().specialProperties ["Selected"] = true;
+				newAttr.GetComponent<Image> ().sprite = Resources.Load<Sprite> ("Sprites/Selected");
+			}
+			/*switch (theType) { 
 			case "Cloud":
 				newAttr.AddComponent<Cloud_Script> ();
 				break;
@@ -130,15 +133,18 @@ public class GeneralHandler : MonoBehaviour {
 			case "Grass":
 				newAttr.AddComponent<Grass_Script> ();
 				break;
+			case "Mushroom":
+				newAttr.AddComponent<Mushroom_Script> ();
+				break;
 			default:
 				break;
-			}
+			}*/
 			OrganizeAttributes (goal);
 		}
 	}
 
 	public void OrganizeAttributes(GameObject goal){
-		for (int i = 0; i <= 4; i++)
+		for (int i = 0; i <= 5; i++)
 			foreach (Transform child in goal.transform)
 				if (orderDisplayed [child.gameObject.name] == i)
 					child.SetSiblingIndex (orderDisplayed [child.gameObject.name]);
@@ -150,6 +156,7 @@ public class GeneralHandler : MonoBehaviour {
 		foreach (CaseHandler aCase in myCases.Values) {
 			aCase.caracs ["Heat"] = Random.Range (0, 101);
 			aCase.caracs ["Humidity"] = Random.Range (0, 101);
+			aCase.caracs ["Pressure"] = Random.Range (0, 101);
 			aCase.TestFire ();
 			aCase.SynchroParams ();
 		}

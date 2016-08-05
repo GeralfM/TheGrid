@@ -43,6 +43,7 @@ public class CaseHandler : MonoBehaviour {
 		specialProperties.Add ("Grass", false);
 		specialProperties.Add ("Flammable", false);
 		specialProperties.Add ("Fire", false);
+		specialProperties.Add ("Mushroom", false);
 		specialProperties.Add ("Solid", true);
 		specialProperties.Add ("42", false);
 		specialProperties.Add ("golden", false);
@@ -250,6 +251,7 @@ public class CaseHandler : MonoBehaviour {
 	}
 
 	public void ReturnDescription(){
+		string typeDescr = type;
 		string descr = "Heat : " + caracs ["Heat"] + "\nHumidity : " +
 			caracs ["Humidity"]+ "\nPressure : " + caracs ["Pressure"];
 		if (specialProperties ["Paused"])
@@ -257,8 +259,8 @@ public class CaseHandler : MonoBehaviour {
 		else
 			descr += "\nSpeed : " + (1f / timeM).ToString ();
 		foreach (string toAdd in descriptionBonus.Keys)
-			descr += "\n" + toAdd + " : " + caracs[descriptionBonus[toAdd]];
-		myHandler.PrintInfos (type, descr);
+			typeDescr += "\n" + toAdd + " : " + caracs[descriptionBonus[toAdd]];
+		myHandler.PrintInfos (typeDescr, descr);
 	}
 
 	public void SynchroParams(){

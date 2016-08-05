@@ -15,6 +15,7 @@ public class Dirt_Script : MonoBehaviour {
 		maintain = false;
 		chrono = 0;
 		StartCoroutine (IsGrass ());
+		StartCoroutine (IsMushroom ());
 	}
 
 	public IEnumerator IsGrass(){
@@ -28,6 +29,18 @@ public class Dirt_Script : MonoBehaviour {
 		}
 	}
 
+	public IEnumerator IsMushroom(){
+		yield return new WaitForSeconds (50*myCase.timeM+Random.Range(-1f,1f));
+		StartCoroutine (IsMushroom ());
+		if (!myCase.specialProperties ["Paused"]) {
+			
+			if (myCase.caracs ["Humidity"] > 80 && myCase.caracs ["Heat"] > 30 && Random.Range(1,101)<=50
+			   && myCase.caracs ["Heat"] < 40 && !myCase.specialProperties ["Mushroom"])
+				myCase.myHandler.NewAttribute (myCase.gameObject, "Mushroom");
+			
+		}
+	}
+
 	public void GrassAppears(){
 		myCase.myHandler.NewAttribute (myCase.gameObject, "Grass");
 	}
@@ -35,6 +48,8 @@ public class Dirt_Script : MonoBehaviour {
 	void OnDestroy(){
 		if (myCase.specialProperties ["Grass"])
 			Destroy (gameObject.transform.Find ("Grass").gameObject);
+		if (myCase.specialProperties ["Mushroom"])
+			Destroy (gameObject.transform.Find ("Mushroom").gameObject);
 	}
 
 	// Update is called once per frame
