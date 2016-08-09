@@ -40,8 +40,19 @@ public class Water_Script : MonoBehaviour {
 			foreach (CaseHandler neigh in myCase.neighbours.Values) {
 				if (neigh.type == "Stone") {
 					neigh.caracs ["Corrosion"] += 3;
-					if (neigh.caracs ["Corrosion"] >= 100)
-						neigh.myAnim.CrossFade ("Void", 0f);
+					if (neigh.caracs ["Corrosion"] >= 100) {
+
+						bool goToSand = false;
+						foreach (CaseHandler neighbour in neigh.neighbours.Values)
+							if (neighbour.type == "Water" && neighbour.caracs ["Pressure"] >= 70)
+								goToSand = true;
+						if (goToSand)
+							neigh.myAnim.CrossFade ("Sand", 0f);
+						else
+							neigh.myAnim.CrossFade ("Void", 0f);
+						myCase.myAnim.CrossFade ("Void", 0f); //become void again
+
+					}
 				}
 			}
 

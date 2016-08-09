@@ -116,15 +116,15 @@ public class GeneralHandler : MonoBehaviour {
 				goal.GetComponent<CaseHandler> ().specialProperties ["Selected"] = true;
 				newAttr.GetComponent<Image> ().sprite = Resources.Load<Sprite> ("Sprites/Selected");
 			}
-			OrganizeAttributes (goal);
 		}
+		OrganizeAttributes (goal);
 	}
 
 	public void OrganizeAttributes(GameObject goal){
-		for (int i = 0; i <= 5; i++)
+		for (int i = 5; i >= 1; i--)
 			foreach (Transform child in goal.transform)
 				if (orderDisplayed [child.gameObject.name] == i)
-					child.SetAsLastSibling ();
+					child.SetAsFirstSibling ();
 	}
 
 	//=====================================================================================

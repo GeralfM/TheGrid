@@ -61,6 +61,11 @@ public class Fire_Script : MonoBehaviour {
 		StartCoroutine (StillHere ());
 		if (!myCase.specialProperties["Flammable"])
 			Destroy (gameObject);
+		foreach (CaseHandler neigh in myCase.neighbours.Values)
+			if (neigh.type == "Water") {
+				neigh.myAnim.CrossFade ("Void", 0f);
+				Destroy (gameObject);
+			}
 	}
 
 	void OnDestroy(){

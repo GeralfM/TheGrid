@@ -51,6 +51,7 @@ public class Organism_Script : MonoBehaviour {
 					GetComponent<RectTransform> ().offsetMin = Vector2.zero;
 					GetComponent<RectTransform> ().offsetMax = Vector2.zero;
 					Initialize ();
+					myCase.myHandler.OrganizeAttributes (myCase.gameObject);
 				} else 
 					Destroy (gameObject);
 			} 
