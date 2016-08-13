@@ -9,6 +9,7 @@ public class CaseHandler : MonoBehaviour {
 	public GameObject myHum;
 	public GameObject myPres;
 	public GameObject myVit;
+	public GameObject myWind;
 
 	public GeneralHandler myHandler { get; set;}
 	public CursorHandler myCursor { get; set;}
@@ -22,12 +23,17 @@ public class CaseHandler : MonoBehaviour {
 	public Dictionary<string,int> caracs = new Dictionary<string, int> ();
 	public Dictionary<string,bool> specialProperties = new Dictionary<string, bool>();
 	public Dictionary<string, CaseHandler> neighbours = new Dictionary<string, CaseHandler>();
+	public Dictionary<string, CaseHandler> sqNeighbours = new Dictionary<string, CaseHandler>();
+
+	public CaseHandler windGoal { get; set;}
 
 	// Use this for initialization
 	void Start () {
 		myHandler = GameObject.Find ("MainHandler").GetComponent<GeneralHandler> ();
 		myCursor = GameObject.Find ("MainHandler").GetComponent<CursorHandler> ();
 		myAnim = gameObject.GetComponent<Animator> ();
+
+		windGoal = null;
 
 		type = "Void";
 
@@ -36,6 +42,7 @@ public class CaseHandler : MonoBehaviour {
 		caracs.Add ("Pressure", 50);
 		caracs.Add ("Grad_Heat", 0);
 		caracs.Add ("Organisms", 0);
+		caracs.Add ("Wind", -1);
 
 		timeM = 1f;
 		specialProperties.Add ("Cloud", false);
@@ -55,6 +62,7 @@ public class CaseHandler : MonoBehaviour {
 		StartCoroutine (AttributeTest ());
 		StartCoroutine (HeatMovement ());
 		StartCoroutine (PressureMovement ());
+		StartCoroutine (RefreshWind ());
 		if (myHandler.properties ["cataclysmsAuthorized"])
 			StartCoroutine (DisasterTest ());
 		StartCoroutine (SoGoldMuchWow ());
@@ -158,6 +166,12 @@ public class CaseHandler : MonoBehaviour {
 		}
 	}
 
+	public IEnumerator RefreshWind(){
+		yield return new WaitForSeconds (1+Random.Range(-0.1f,0.1f));
+		StartCoroutine( RefreshWind ());
+		RecomputeWindDirection ();
+	}
+
 	//=======================MINOR FUNCTIONS====================================================
 
 	public void ChangeParam(string param, int value){
@@ -166,6 +180,27 @@ public class CaseHandler : MonoBehaviour {
 		if (specialProperties["Flammable"])
 			TestFire ();
 		specialProperties ["42"] = (caracs ["Heat"] == 42 && caracs ["Humidity"] == 42 && caracs["Pressure"] == 42);
+	}
+
+	public void RecomputeWindDirection(){
+		bool greater = false;
+		bool singleMinimum = false;
+		windGoal = this;
+		foreach (CaseHandler neigh in sqNeighbours.Values) {
+			if (neigh.caracs ["Pressure"] > caracs ["Pressure"])
+				greater = true;
+			if (neigh.caracs ["Pressure"] < windGoal.caracs ["Pressure"]) {
+				windGoal = neigh;
+				singleMinimum = true;
+			} else if (neigh.caracs ["Pressure"] == windGoal.caracs ["Pressure"])
+				singleMinimum = false;
+				
+		}
+		if (greater && singleMinimum && windGoal != this) 
+			caracs ["Wind"] = myHandler.neighboursAngle [(windGoal.hor - hor).ToString () +
+				(windGoal.ver - ver).ToString ()];
+		else
+			caracs ["Wind"] = -1;
 	}
 
 	public IEnumerator SoGoldMuchWow(){
@@ -226,35 +261,31 @@ public class CaseHandler : MonoBehaviour {
 	}
 
 	public void PrintCarac(string carac){
-		switch(carac)
-		{
-		case "Heat":
+		if(carac!="Heat")
+			myHeat.SetActive (false);
+		else
 			myHeat.SetActive (!myHeat.activeSelf);
-			myPres.SetActive (false);
+
+		if(carac!="Humidity")
 			myHum.SetActive (false);
-			myVit.SetActive (false);
-			break;
-		case "Humidity":
+		else
 			myHum.SetActive (!myHum.activeSelf);
-			myPres.SetActive (false);
-			myHeat.SetActive (false);
+
+		if(carac!="Speed")
 			myVit.SetActive (false);
-			break;
-		case "Speed":
+		else
 			myVit.SetActive (!myVit.activeSelf);
+
+		if(carac!="Pressure")
 			myPres.SetActive (false);
-			myHeat.SetActive (false);
-			myHum.SetActive (false);
-			break;
-		case "Pressure":
+		else
 			myPres.SetActive (!myPres.activeSelf);
-			myVit.SetActive (false);
-			myHeat.SetActive (false);
-			myHum.SetActive (false);
-			break;
-		default:
-			break;
-		}
+
+		if(carac!="Wind")
+			myWind.SetActive (false);
+		else
+			myWind.SetActive (!myWind.activeSelf);
+
 		SynchroParams ();
 	}
 
@@ -282,22 +313,26 @@ public class CaseHandler : MonoBehaviour {
 			float B = Mathf.Min (1, 2 - 2 * rate);
 			transform.Find ("Heat").Find ("Text").gameObject.GetComponent<Text> ().text = caracs ["Heat"].ToString ();
 			transform.Find ("Heat").gameObject.GetComponent<Image> ().color = new Color (R, G, B);
-		}
-		if (myHum.activeSelf) {
+		} else if (myHum.activeSelf) {
 			float rate = caracs ["Humidity"] / 100f;
 			transform.Find ("Hum").Find ("Text").gameObject.GetComponent<Text> ().text = caracs ["Humidity"].ToString ();
 			transform.Find ("Hum").gameObject.GetComponent<Image> ().color = new Color (1 - rate, 1 - rate, 1);
-		}
-		if (myPres.activeSelf) {
+		} else if (myPres.activeSelf) {
 			float rate = caracs ["Pressure"] / 100f;
 			transform.Find ("Pres").Find ("Text").gameObject.GetComponent<Text> ().text = caracs ["Pressure"].ToString ();
 			transform.Find ("Pres").gameObject.GetComponent<Image> ().color = new Color (1, 1 - rate, 0);
-		}
-		if (myVit.activeSelf) {
+		} else if (myVit.activeSelf) {
 			if (specialProperties ["Paused"])
-				transform.Find("Vit").Find("Text").gameObject.GetComponent<Text> ().text = "0";
+				transform.Find ("Vit").Find ("Text").gameObject.GetComponent<Text> ().text = "0";
 			else
-				transform.Find("Vit").Find("Text").gameObject.GetComponent<Text> ().text = (1f / timeM).ToString ();
+				transform.Find ("Vit").Find ("Text").gameObject.GetComponent<Text> ().text = (1f / timeM).ToString ();
+		} else if (myWind.activeSelf) {
+			if (caracs ["Wind"] != -1) {
+				transform.Find ("Wind").GetComponent<Image> ().enabled = true;
+				transform.Find ("Wind").GetComponent<Transform> ().eulerAngles = new Vector3 (0f, 0f, caracs["Wind"]);
+			}
+			else
+				transform.Find ("Wind").GetComponent<Image> ().enabled = false;
 		}
 	}
 

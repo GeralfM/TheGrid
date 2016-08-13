@@ -9,14 +9,19 @@ public class Cloud_Script : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		myCase = gameObject.transform.parent.gameObject.GetComponent<CaseHandler>();
-		myCase.specialProperties ["Cloud"] = true;
-		myCase.specialProperties ["Day&NightEffects"] = false;
+		Initialize ();
 
 		gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite> ("Sprites/Clouds");
 		gameObject.GetComponent<Image> ().color = new Color (1, 1, 1, 0.5f);
 
 		StartCoroutine (Routine ());
+		StartCoroutine (Move (25f));
+	}
+
+	public void Initialize(){
+		myCase = gameObject.transform.parent.gameObject.GetComponent<CaseHandler>();
+		myCase.specialProperties ["Cloud"] = true;
+		myCase.specialProperties ["Day&NightEffects"] = false;
 	}
 
 	public IEnumerator Routine(){
@@ -28,6 +33,30 @@ public class Cloud_Script : MonoBehaviour {
 		}
 		yield return new WaitForSeconds (50f*myCase.timeM);
 		StartCoroutine (Routine ());
+	}
+
+	public IEnumerator Move(float delay){
+		yield return new WaitForSeconds (delay * myCase.timeM + Random.Range (-0.5f, 0.5f));
+		if (myCase.caracs["Wind"]!=-1 && !myCase.specialProperties ["Paused"]) {
+
+			if (myCase.windGoal.specialProperties ["Cloud"] == false) {
+				myCase.specialProperties ["Cloud"] = false;
+				myCase.specialProperties ["Day&NightEffects"] = true;
+
+				gameObject.transform.SetParent (myCase.windGoal.gameObject.transform);
+
+				RectTransform rec = GetComponent<RectTransform> ();
+				rec.localPosition = new Vector3 (0, 0, 0);
+				rec.offsetMin = Vector2.zero;
+				rec.offsetMax = Vector2.zero;
+
+				Initialize ();
+				myCase.myHandler.OrganizeAttributes (myCase.gameObject);
+			} 
+	
+		}
+		yield return new WaitForSeconds (50f*myCase.timeM+Random.Range(-1f,1f));
+		StartCoroutine (Move (0f));
 	}
 
 	void OnDestroy(){

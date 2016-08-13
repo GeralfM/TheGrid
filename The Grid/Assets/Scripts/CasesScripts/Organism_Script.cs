@@ -46,7 +46,6 @@ public class Organism_Script : MonoBehaviour {
 				if (goal.type == "Water" && goal.caracs ["Heat"] >= 45 && goal.caracs ["Heat"] <= 55
 				    && goal.caracs ["Organisms"] < 10) {
 					gameObject.transform.SetParent (goal.gameObject.transform);
-					gameObject.transform.SetAsFirstSibling ();
 					GetComponent<Transform> ().localPosition = new Vector3 (0, 0, 0);
 					GetComponent<RectTransform> ().offsetMin = Vector2.zero;
 					GetComponent<RectTransform> ().offsetMax = Vector2.zero;

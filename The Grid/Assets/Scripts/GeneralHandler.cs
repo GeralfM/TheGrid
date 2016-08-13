@@ -17,6 +17,7 @@ public class GeneralHandler : MonoBehaviour {
 	public Dictionary<string,CaseHandler> myCases = new Dictionary<string, CaseHandler>(); 
 
 	private Dictionary<string,int> orderDisplayed = new Dictionary<string,int>();
+	public Dictionary<string,int> neighboursAngle = new Dictionary<string,int>();
 
 	public bool isDay { get; set;}
 	public int hour { get; set;}
@@ -30,8 +31,17 @@ public class GeneralHandler : MonoBehaviour {
 		orderDisplayed.Add("Mushroom",2);
 		orderDisplayed.Add("Fire",3);
 		orderDisplayed.Add("Cloud",4);
-		foreach(string element in new List<string>{"Selected","Heat","Hum","Vit","Pres"})
+		foreach(string element in new List<string>{"Selected","Heat","Hum","Vit","Pres", "Wind"})
 			orderDisplayed.Add(element,5);
+
+		neighboursAngle.Add ("01", 0);
+		neighboursAngle.Add ("11", 315);
+		neighboursAngle.Add ("10", 270);
+		neighboursAngle.Add ("1-1", 225);
+		neighboursAngle.Add ("0-1", 180);
+		neighboursAngle.Add ("-1-1", 135);
+		neighboursAngle.Add ("-10", 90);
+		neighboursAngle.Add ("-11", 45);
 
 		CreateNewGrid ();
 		PrintTime ();
@@ -75,6 +85,8 @@ public class GeneralHandler : MonoBehaviour {
 			}
 		}
 		SetNeighbours ();
+		foreach (CaseHandler aCase in myCases.Values)
+			aCase.sqNeighbours = GetAllSquareNeighbours (aCase);
 
 		typeCase = GameObject.Find ("NameType").GetComponent<Text> ();
 		caraCase = GameObject.Find ("NameCaracs").GetComponent<Text> ();
@@ -193,6 +205,15 @@ public class GeneralHandler : MonoBehaviour {
 		return answer;
 	}
 
+	public Dictionary<string,CaseHandler> GetAllSquareNeighbours(CaseHandler me){
+		Dictionary<string,CaseHandler> answer = new Dictionary<string,CaseHandler> ();
+		for (int i = me.hor - 1; i <= me.hor + 1; i++)
+			for (int j = me.ver - 1; j <= me.ver + 1; j++)
+				if (myCases.ContainsKey (i + "" + j) && !(i == me.hor && j == me.ver))
+					answer.Add (i + "" + j, myCases [i + "" + j]);
+		return answer;
+	}
+
 	public void PrintInfos(string type, string descr){
 		typeCase.text = type;
 		caraCase.text = descr;
@@ -229,6 +250,9 @@ public class GeneralHandler : MonoBehaviour {
 		if (Input.GetKeyDown (KeyCode.P))
 			foreach (CaseHandler caseH in myCases.Values)
 				caseH.PrintCarac("Pressure");
+		if (Input.GetKeyDown (KeyCode.W))
+			foreach (CaseHandler caseH in myCases.Values)
+				caseH.PrintCarac("Wind");
 		if (Input.GetKeyDown (KeyCode.Escape))
 			DisplayMenu();
 	}
