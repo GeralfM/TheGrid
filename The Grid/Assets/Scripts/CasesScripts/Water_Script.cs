@@ -1,13 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Water_Script : MonoBehaviour {
-
-	public CaseHandler myCase{ get; set;}
+public class Water_Script : Case {
 
 	// Use this for initialization
-	void Start () {
-		myCase = gameObject.GetComponent<CaseHandler> ();
+	protected override void Start () {
+		base.Start();
 
 		myCase.specialProperties ["Solid"] = false;
 		if (myCase.specialProperties ["Fire"])
@@ -77,9 +75,5 @@ public class Water_Script : MonoBehaviour {
 			if (child.gameObject.name == "Organisms")
 				Destroy (child);
 	}
-
-	// Update is called once per frame
-	void Update () {
-	
-	}
+		
 }

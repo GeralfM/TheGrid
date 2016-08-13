@@ -1,19 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Dirt_Script : MonoBehaviour {
-
-	public CaseHandler myCase{ get; set;}
-
-	public bool maintain { get; set;}
-	public float chrono { get; set;}
+public class Dirt_Script : Case {
 
 	// Use this for initialization
-	void Start () {
-		myCase = gameObject.GetComponent<CaseHandler> ();
+	protected override void Start () {
+		base.Start();
 		myCase.specialProperties ["Solid"] = true;
-		maintain = false;
-		chrono = 0;
+
+		goalTimes.Add ("Fire", 150f);
+		goalTimes.Add ("Grass", 50f);
+		maintainTimes.Add ("Grass", false);
+		chronoTimes.Add ("Grass", 0f);
+
 		StartCoroutine (IsGrass ());
 		StartCoroutine (IsMushroom ());
 	}
@@ -22,10 +21,10 @@ public class Dirt_Script : MonoBehaviour {
 		yield return new WaitForSeconds (1);
 		StartCoroutine (IsGrass ());
 		if (myCase.caracs ["Humidity"] > 30 && !myCase.specialProperties ["Grass"])
-			maintain = true;
+			maintainTimes["Grass"] = true;
 		else {
-			maintain = false;
-			chrono = 0f;
+			maintainTimes["Grass"] = false;
+			chronoTimes["Grass"] = 0f;
 		}
 	}
 
@@ -53,13 +52,14 @@ public class Dirt_Script : MonoBehaviour {
 	}
 
 	// Update is called once per frame
-	void Update () {
+	protected override void Update () {
+		base.Update ();
 
-		if (maintain && !myCase.specialProperties["Paused"]) { // grass growth
-			chrono += Time.deltaTime;
-			if (chrono >= 50f*myCase.timeM) {
+		if (maintainTimes["Grass"] && !myCase.specialProperties["Paused"]) { // grass growth
+			chronoTimes["Grass"] += Time.deltaTime;
+			if (chronoTimes["Grass"] >= goalTimes["Grass"]*myCase.timeM) {
 				GrassAppears ();
-				chrono = 0f;
+				chronoTimes["Grass"] = 0f;
 			}
 		}
 

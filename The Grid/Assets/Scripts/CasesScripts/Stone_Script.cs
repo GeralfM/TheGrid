@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Stone_Script : MonoBehaviour {
-
-	public CaseHandler myCase{ get; set;}
+public class Stone_Script : Case {
 
 	// Use this for initialization
-	void Start () {
-		myCase = gameObject.GetComponent<CaseHandler> ();
+	protected override void Start () {
+		base.Start();
+
+		goalTimes.Add ("Fire", 400f);
+
 		myCase.specialProperties ["Solid"] = true;
 		myCase.caracs.Add ("Corrosion", 0);
 		myCase.descriptionBonus.Add ("Corrosion", "Corrosion");
@@ -19,7 +20,8 @@ public class Stone_Script : MonoBehaviour {
 	}
 
 	// Update is called once per frame
-	void Update () {
+	protected override void Update () {
+		base.Update ();
 	
 	}
 }

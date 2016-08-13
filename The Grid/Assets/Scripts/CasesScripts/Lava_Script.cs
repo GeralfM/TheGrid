@@ -2,13 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Lava_Script : MonoBehaviour {
-
-	public CaseHandler myCase{ get; set;}
+public class Lava_Script : Case {
 
 	// Use this for initialization
-	void Start () {
-		myCase = gameObject.GetComponent<CaseHandler> ();
+	protected override void Start () {
+		base.Start();
 		myCase.specialProperties ["Solid"] = false;
 		StartCoroutine (Routine ());
 		StartCoroutine (Drain ());
@@ -47,9 +45,5 @@ public class Lava_Script : MonoBehaviour {
 
 		}
 	}
-
-	// Update is called once per frame
-	void Update () {
-	
-	}
+		
 }

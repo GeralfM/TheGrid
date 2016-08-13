@@ -1,13 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Steam_Script : MonoBehaviour {
+public class Steam_Script : Case {
 	
-	public CaseHandler myCase{ get; set;}
-
 	// Use this for initialization
-	void Start () {
-		myCase = gameObject.GetComponent<CaseHandler> ();
+	protected override void Start () {
+		base.Start();
 		myCase.specialProperties ["Solid"] = false;
 		StartCoroutine (Humidify ());
 	}
@@ -22,9 +20,5 @@ public class Steam_Script : MonoBehaviour {
 
 		}
 	}
-
-	// Update is called once per frame
-	void Update () {
-	
-	}
+		
 }

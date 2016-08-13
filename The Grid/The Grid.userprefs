@@ -1,11 +1,12 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/CasesScripts/Cloud_Script.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/CasesScripts/Fire_Script.cs">
     <Files>
-      <File FileName="Assets/Scripts/CaseHandler.cs" Line="199" Column="43" />
-      <File FileName="Assets/Scripts/CasesScripts/Cloud_Script.cs" Line="39" Column="87" />
-      <File FileName="Assets/Scripts/GeneralHandler.cs" Line="42" Column="35" />
-      <File FileName="Assets/Scripts/CasesScripts/Organism_Script.cs" Line="49" Column="6" />
+      <File FileName="Assets/Scripts/CasesScripts/Case.cs" Line="35" Column="3" />
+      <File FileName="Assets/Scripts/CaseHandler.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/CasesScripts/Fire_Script.cs" Line="18" Column="3" />
+      <File FileName="Assets/Scripts/CasesScripts/Water_Script.cs" Line="78" Column="3" />
+      <File FileName="Assets/Scripts/GeneralHandler.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

@@ -1,13 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Ice_Script : MonoBehaviour {
-
-	public CaseHandler myCase{ get; set;}
+public class Ice_Script : Case {
 
 	// Use this for initialization
-	void Start () {
-		myCase = gameObject.GetComponent<CaseHandler> ();
+	protected override void Start () {
+		base.Start();
 		myCase.specialProperties ["Solid"] = true;
 		StartCoroutine (Freeze ());
 	}
@@ -21,9 +19,5 @@ public class Ice_Script : MonoBehaviour {
 				neigh.myAnim.CrossFade ("Ice",0f);
 			}
 	}
-
-	// Update is called once per frame
-	void Update () {
-	
-	}
+		
 }

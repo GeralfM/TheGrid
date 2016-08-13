@@ -1,13 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Sand_Script : MonoBehaviour {
-
-	public CaseHandler myCase{ get; set;}
+public class Sand_Script : Case {
 
 	// Use this for initialization
-	void Start () {
-		myCase = gameObject.GetComponent<CaseHandler> ();
+	protected override void Start () {
+		base.Start();
+		goalTimes.Add ("Fire", 100f);
 		StartCoroutine (IsSolid ());
 	}
 
@@ -18,7 +17,8 @@ public class Sand_Script : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	protected override void Update () {
+		base.Update ();
 	
 	}
 }
