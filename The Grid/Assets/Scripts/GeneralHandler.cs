@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public class GeneralHandler : MonoBehaviour {
 
 	public GameObject menu;
+	public GameObject encyclopedia;
 	public GameObject firstCase;
 	public GameObject firstAttribute;
 
@@ -122,8 +123,10 @@ public class GeneralHandler : MonoBehaviour {
 			newAttr.GetComponent<RectTransform> ().localScale = Vector3.one;
 			newAttr.GetComponent<Transform> ().localPosition = Vector3.zero;
 			newAttr.name = theType;
-			if (!new List<string>{ "Selected" }.Contains (theType))
+			if (!new List<string>{ "Selected" }.Contains (theType)) {
+				encyclopedia.GetComponent<Encyclopedia> ().allTypes [theType] = true;
 				newAttr.AddComponent (System.Type.GetType (theType + "_Script"));
+			}
 			else {
 				goal.GetComponent<CaseHandler> ().specialProperties ["Selected"] = true;
 				newAttr.GetComponent<Image> ().sprite = Resources.Load<Sprite> ("Sprites/Selected");
@@ -219,8 +222,13 @@ public class GeneralHandler : MonoBehaviour {
 		caraCase.text = descr;
 	}
 
-	public void DisplayMenu(){
-		menu.SetActive (!menu.activeSelf);
+	public void DisplayMenu(GameObject cible){
+		if (encyclopedia.activeSelf)
+			encyclopedia.SetActive (false);
+		cible.SetActive (!cible.activeSelf);
+
+		if (cible.name == "Encyclopedia")
+			encyclopedia.GetComponent<Encyclopedia> ().MajIcons ();
 	}
 
 	public void ChangeConfiguration(string param){
@@ -253,7 +261,10 @@ public class GeneralHandler : MonoBehaviour {
 		if (Input.GetKeyDown (KeyCode.W))
 			foreach (CaseHandler caseH in myCases.Values)
 				caseH.PrintCarac("Wind");
-		if (Input.GetKeyDown (KeyCode.Escape))
-			DisplayMenu();
+		if (Input.GetKeyDown (KeyCode.Escape)) {
+			DisplayMenu (menu);
+			if (encyclopedia.activeSelf)
+				encyclopedia.SetActive (false);
+		}
 	}
 }

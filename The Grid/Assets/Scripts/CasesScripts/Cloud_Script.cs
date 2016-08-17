@@ -11,7 +11,7 @@ public class Cloud_Script : MonoBehaviour {
 	void Start () {
 		Initialize ();
 
-		gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite> ("Sprites/Clouds");
+		gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite> ("Sprites/Cloud");
 		gameObject.GetComponent<Image> ().color = new Color (1, 1, 1, 0.5f);
 
 		StartCoroutine (Routine ());

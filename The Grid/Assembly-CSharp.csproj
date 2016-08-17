@@ -50,6 +50,7 @@
      <Compile Include="Assets\Scripts\CasesScripts\Carbon_Script.cs" />
      <Compile Include="Assets\Scripts\CasesScripts\Case.cs" />
      <Compile Include="Assets\Scripts\CasesScripts\Cloud_Script.cs" />
+     <Compile Include="Assets\Scripts\CasesScripts\Diamond_Script.cs" />
      <Compile Include="Assets\Scripts\CasesScripts\Dirt_Script.cs" />
      <Compile Include="Assets\Scripts\CasesScripts\Fire_Script.cs" />
      <Compile Include="Assets\Scripts\CasesScripts\Grass_Script.cs" />
@@ -64,8 +65,11 @@
      <Compile Include="Assets\Scripts\ChangeCase.cs" />
      <Compile Include="Assets\Scripts\ChangeGround.cs" />
      <Compile Include="Assets\Scripts\CursorHandler.cs" />
+     <Compile Include="Assets\Scripts\ElementHandler.cs" />
+     <Compile Include="Assets\Scripts\Encyclopedia.cs" />
      <Compile Include="Assets\Scripts\GeneralHandler.cs" />
      <Compile Include="Assets\Scripts\GroundHandler.cs" />
+     <None Include="Assets\Resources\Files\Descriptions.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
