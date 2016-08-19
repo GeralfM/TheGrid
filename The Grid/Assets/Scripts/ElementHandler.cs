@@ -22,7 +22,7 @@ public class ElementHandler : MonoBehaviour {
 			myEn.visualElement.GetComponent<Image> ().sprite = Resources.Load<Sprite> ("Sprites/" + nameType);
 			myEn.descriptionElement.GetComponent<Text> ().text = myEn.myDescr [nameType];
 		} else {
-			myEn.nameElement.GetComponent<Text> ().text = "Undicovered";
+			myEn.nameElement.GetComponent<Text> ().text = "Undiscovered";
 			myEn.visualElement.GetComponent<Image> ().sprite = Resources.Load<Sprite> ("Sprites/Undiscovered");
 			myEn.descriptionElement.GetComponent<Text> ().text = "You don't have discovered this element yet";
 		}

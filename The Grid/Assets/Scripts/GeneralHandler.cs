@@ -57,12 +57,13 @@ public class GeneralHandler : MonoBehaviour {
 		GameObject.Find ("ButtonCopy").GetComponent<Image> ().enabled = properties["copyAuthorized"];
 
 		foreach (string str in 
-			new List<string>{"ButtonSelect","ButtonHeat","ButtonHumidity","ButtonSwitch","ButtonCopy"})
+			new List<string>{"ButtonHeat","ButtonHumidity","ButtonSwitch","ButtonCopy"})
 			GameObject.Find (str).GetComponent<ButtonHandler> ().SetSelected (false);
 		gameObject.GetComponent<CursorHandler> ().SetState ("none");
 
 		isDay = true;
 		hour = 0;
+		PrintTime ();
 	}
 
 	public void CreateNewGrid(){
@@ -86,9 +87,7 @@ public class GeneralHandler : MonoBehaviour {
 			}
 		}
 		SetNeighbours ();
-		foreach (CaseHandler aCase in myCases.Values)
-			aCase.sqNeighbours = GetAllSquareNeighbours (aCase);
-
+	
 		typeCase = GameObject.Find ("NameType").GetComponent<Text> ();
 		caraCase = GameObject.Find ("NameCaracs").GetComponent<Text> ();
 		timeText = GameObject.Find ("NameTime").GetComponent<Text> ();
@@ -108,6 +107,8 @@ public class GeneralHandler : MonoBehaviour {
 					}
 			}
 		}
+		foreach (CaseHandler aCase in myCases.Values)
+			aCase.sqNeighbours = GetAllSquareNeighbours (aCase);
 
 	}
 

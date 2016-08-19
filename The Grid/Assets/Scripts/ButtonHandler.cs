@@ -11,22 +11,35 @@ public class ButtonHandler : MonoBehaviour {
 	public Image myImage { get; set;}
 	public float stockedTime { get; set;}
 
+	public bool selected { get; set;}
+
 	// Use this for initialization
 	void Start () {
+		selected = false;
 		myImage = gameObject.GetComponent<Image> ();
 		myHandler = GameObject.Find ("MainHandler").GetComponent<GeneralHandler> ();
 		myCursor = GameObject.Find ("MainHandler").GetComponent<CursorHandler> ();
 	}
 
+	public void SetSelected(){
+		selected = !selected;
+		SetSelected (selected);
+	}
 	public void SetSelected(bool itIs){
 		if (itIs)
 			myImage.color = new Color (1, 1, 1, 1);
 		else
 			myImage.color = new Color (1, 1, 1, 0.5f);
+		selected = itIs;
 	}
 
 	public void ChoiceTimeMethod(){
-		if (myCursor.cursorState == "Select")
+		bool anySelect = false;
+		foreach (CaseHandler aCase in myHandler.myCases.Values)
+			if (aCase.specialProperties ["Selected"])
+				anySelect = true;
+		
+		if (anySelect)
 			HandleObjectTime (myCursor.allSelected);
 		else
 			HandleTime ();

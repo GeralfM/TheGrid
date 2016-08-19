@@ -1,129 +1,129 @@
 Carbon
 ===
-Appearance : a block burned for a certain time
-Disappearance : burned for 3H
-Effects :
-Solid : Yes
-Heat transfer resistance : 3
-Can lead to : Diamond, Void
-Can generate :
+<b>Appearance :</b> a block burned for a certain time
+<b>Disappearance :</b> burned for 3H
+<b>Effects :</b>
+<b>Solid :</b> Yes
+<b>Heat transfer resistance :</b> 3
+<b>Can lead to :</b> Diamond, Void
+<b>Can generate :</b>
 ===
 Mushroom
 ===
-Appearance : on dirt, with temperature between 30 and 40, and humidity >= 80. 50% chance per hour
-Disappearance : temperature or humidity out of previous intervals
-Effects : can grow by 1 with 50% chances per hour. Maximum 12
+<b>Appearance :</b> on dirt, with temperature between 30 and 40, and humidity >= 80. 50% chance per hour
+<b>Disappearance :</b> temperature or humidity out of previous intervals
+<b>Effects :</b> can grow by 1 with 50% chances per hour. Maximum 12
 ===
 Diamond
 ===
-Appearance : from carbon, with pressure = 100, and temperature = 100
-Disappearance : 
-Effects :
-Solid : Yes
-Heat transfer resistance : -1
-Can lead to :
-Can generate :
+<b>Appearance :</b> from carbon, with pressure = 100, and temperature = 100
+<b>Disappearance :</b> 
+<b>Effects :</b>
+<b>Solid :</b> Yes
+<b>Heat transfer resistance :</b> -1
+<b>Can lead to :</b>
+<b>Can generate :</b>
 ===
 Water
 ===
-Appearance : from void, with temperature <= 50, and heat = 100
-Disappearance : humidity = 0, or close to fire, or entirely corroded a stone
-Effects : Corrodes stone by 3% each 10s, humidifies neighbours by 10 per hour
-Solid : No
-Heat transfer resistance : 10
-Can lead to : Ice, Steam, Void
-Can generate : Organisms
+<b>Appearance :</b> from void, with temperature <= 50, and humidity = 100
+<b>Disappearance :</b> humidity = 0, or close to fire, or entirely corroded a stone
+<b>Effects :</b> Corrodes stone by 3% each 10s, humidifies neighbours by 10 per hour
+<b>Solid :</b> No
+<b>Heat transfer resistance :</b> 10
+<b>Can lead to :</b> Ice, Steam, Void
+<b>Can generate :</b> Organisms
 ===
 Fire
 ===
-Appearance : on a block which can burn, with humidity = 0 and temperature = 100
-Disappearance : the block cannot burn anymore, or close to a water block
-Effects : spreads to a neighboring cell every 3H, drains neighbours by 10 and warms them up by 10 per hour
+<b>Appearance :</b> on a block which can burn, with humidity = 0 and temperature = 100
+<b>Disappearance :</b> the block cannot burn anymore, or close to a water block
+<b>Effects :</b> spreads to a neighboring cell every 3H, drains neighbours by 10 and warms them up by 10 per hour
 ===
 Ice
 ===
-Appearance : from water, with temperature <= 5
-Disappearance : temperature > 5, become water
-Effects : if neighboring cells are water with temperature <=10, brings their temperature to 5
-Solid : Yes
-Heat transfer resistance : 5
-Can lead to : Water, Void
-Can generate : 
+<b>Appearance :</b> from water, with temperature <= 5
+<b>Disappearance :</b> temperature > 5, become water
+<b>Effects :</b> if neighboring cells are water with temperature <=10, brings their temperature to 5
+<b>Solid :</b> Yes
+<b>Heat transfer resistance :</b> 5
+<b>Can lead to :</b> Water, Void
+<b>Can generate :</b>
 ===
 Grass
 ===
-Appearance : on dirt, with humidity > 30 during 1H
-Disappearance : 
-Effects : if a neighboring cell is on fire during 25s, the grass takes fire
+<b>Appearance :</b> on dirt, with humidity > 30 during 1H
+<b>Disappearance :</b> 
+<b>Effects :</b> if a neighboring cell is on fire during 25s, the grass takes fire
 ===
 Lava
 ===
-Appearance : from stone, with temperature > 95
-Disappearance : temperature < 85, become stone
-Effects : a neighboring cell takes fire every 3H, drains neighbours by 20 and warms them up by 20 every 3H
-Solid : No
-Heat transfer resistance : 2
-Can lead to : Stone
-Can generate : 
+<b>Appearance :</b> from stone, with temperature > 95
+<b>Disappearance :</b> temperature < 85, become stone
+<b>Effects :</b> a neighboring cell takes fire every 3H, drains neighbours by 20 and warms them up by 20 every 3H
+<b>Solid :</b> No
+<b>Heat transfer resistance :</b> 2
+<b>Can lead to :</b> Stone
+<b>Can generate :</b> 
 ===
 Cloud
 ===
-Appearance : humidity >= 80, 50% chances per hour
-Disappearance : (120-Humidity)% chances to disappear to give 20 humidity to the cell per hour
-Effects : the heat of the case doesn't follow the day and night cycle anymore, the clouds move in the direction of the wind every hour
+<b>Appearance :</b> humidity >= 80, 50% chances per hour
+<b>Disappearance :</b> (120-Humidity)% chances to disappear to give 20 humidity to the cell per hour
+<b>Effects :</b> the heat of the case doesn't follow the day and night cycle anymore, the clouds move in the direction of the wind every hour
 ===
 Organism
 ===
-Appearance : on water, with temperature between 45 and 50, 30% chances per hour
-Disappearance : temperature out of the 45 to 55 range
-Effects : grows by 1 per hour. Maximum 10. Every 2H, an organism has 80% chances to move to a neighboring cell
+<b>Appearance :</b> on water, with temperature between 45 and 50, 30% chances per hour
+<b>Disappearance :</b> temperature out of the 45 to 55 range
+<b>Effects :</b> grows by 1 per hour. Maximum 10. Every 2H, an organism has 80% chances to move to a neighboring cell
 ===
 Stone
 ===
-Appearance : from void, with temperature <= 50 and humidity = 0
-Disappearance : entirely corroded, becomes void or sand
-Effects :
-Solid : Yes
-Heat transfer resistance : 5
-Can lead to : Carbon (burning 8H), Lava, Sand, Void
-Can generate : 
+<b>Appearance :</b> from void, with temperature <= 50 and humidity = 0
+<b>Disappearance :</b> entirely corroded, becomes void or sand
+<b>Effects :</b>
+<b>Solid :</b> Yes
+<b>Heat transfer resistance :</b> 5
+<b>Can lead to :</b> Carbon (burning 8H), Lava, Sand, Void
+<b>Can generate :</b> 
 ===
 Sand
 ===
-Appearance : from void, with temperature <= 50 and humidity between 1 and 9 or from stone corroded by water block with pressure > 70
-Disappearance : pressure >= 80, becomes stone
-Effects : 
-Solid : Yes if humidity <= 70, no otherwise
-Heat transfer resistance : 5
-Can lead to : Carbon (burning 2H), Stone
-Can generate : 
+<b>Appearance :</b> from void, with temperature <= 50 and humidity between 1 and 9 or from stone corroded by water block with pressure > 70
+<b>Disappearance :</b> pressure >= 80, becomes stone
+<b>Effects :</b> 
+<b>Solid :</b> Yes if humidity <= 70, no otherwise
+<b>Heat transfer resistance :</b> 5
+<b>Can lead to :</b> Carbon (burning 2H), Stone
+<b>Can generate :</b> 
 ===
 Dirt
 ===
-Appearance : from void, with temperature <= 60 and humidity between 10 and 20
-Disappearance :
-Effects : 
-Solid : Yes
-Heat transfer resistance : 3
-Can lead to : Carbon (burning 3H)
-Can generate : Grass, Mushroom
+<b>Appearance :</b> from void, with temperature <= 60 and humidity between 10 and 20
+<b>Disappearance :</b>
+<b>Effects :</b> 
+<b>Solid :</b> Yes
+<b>Heat transfer resistance :</b> 3
+<b>Can lead to :</b> Carbon (burning 3H)
+<b>Can generate :</b> Grass, Mushroom
 ===
 Steam
 ===
-Appearance : from water, with temperature >= 90 and humidity >= 80
-Disappearance : temperature <= 85 and humidity <=75
-Effects : Humidify neighboring cells by 5 per hour
-Solid : No
-Heat transfer resistance : 3
-Can lead to : Void
-Can generate : 
+<b>Appearance :</b> from water, with temperature >= 90 and humidity >= 80
+<b>Disappearance :</b> temperature <= 85 and humidity <=75
+<b>Effects :</b> Humidify neighboring cells by 5 per hour
+<b>Solid :</b> No
+<b>Heat transfer resistance :</b> 3
+<b>Can lead to :</b> Void
+<b>Can generate :</b> 
 ===
 Void
 ===
-Appearance : ininially everywhere
-Disappearance : 
-Effects : 
-Solid : Yes
-Heat transfer resistance : 0
-Can lead to : Water, Stone, Dirt, Steam
-Can generate : 
+<b>Appearance :</b> ininially everywhere
+<b>Disappearance :</b>
+<b>Effects :</b> 
+<b>Solid :</b> Yes
+<b>Heat transfer resistance :</b> 0
+<b>Can lead to :</b> Water, Stone, Dirt, Steam
+<b>Can generate :</b> 

@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
 public class Encyclopedia : MonoBehaviour {
 
 	public GameObject firstElement;
-	public TextAsset descriptions;
 	public Dictionary<string, string> myDescr = new Dictionary<string, string>();
 
 	public GameObject nameElement;
@@ -16,11 +16,19 @@ public class Encyclopedia : MonoBehaviour {
 	public List<ElementHandler> myElements = new List<ElementHandler>();
 
 	void Awake(){
-		string[] descr = descriptions.text.Split 
-			(new string[]{"==="+System.Environment.NewLine},System.StringSplitOptions.None);
-		for (int k = 0; k < descr.Length; k += 2)
-			myDescr.Add (descr [k].Replace(System.Environment.NewLine,""), descr [k + 1]);
 
+		if (!(Application.platform == RuntimePlatform.WindowsPlayer)) {
+			string[] descr = Resources.Load<TextAsset> ("Files/Descriptions").text.Split 
+				(new string[]{ "===" + System.Environment.NewLine }, System.StringSplitOptions.None);
+			for (int k = 0; k < descr.Length; k += 2)
+				myDescr.Add (descr [k].Replace (System.Environment.NewLine, ""), descr [k + 1]);
+		} else {
+			string[] descr = Resources.Load<TextAsset> ("Files/Descriptions").text.Split 
+				(new string[]{ "===\n" }, System.StringSplitOptions.None);
+			for (int k = 0; k < descr.Length; k += 2)
+				myDescr.Add (descr [k].Replace ("\n", ""), descr [k + 1]);
+		}
+			
 		int numBlocs = 15;
 		int i; int j; int count = 0;
 		string[] types = new string[]{ "Carbon", "Mushroom", "Diamond", "Water", "Fire", "Ice",
@@ -48,7 +56,7 @@ public class Encyclopedia : MonoBehaviour {
 			count++;
 		} while(count < numBlocs);
 
-		gameObject.SetActive (false);
+		this.gameObject.SetActive (false);
 	}
 
 	// Use this for initialization

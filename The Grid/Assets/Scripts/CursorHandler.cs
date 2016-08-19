@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
 public class CursorHandler : MonoBehaviour {
 
 	public GeneralHandler myHandler { get; set;}
+	public GameObject popup;
 
 	public string cursorState { get; set;}
 	public bool isLeft { get; set;}
@@ -23,18 +25,21 @@ public class CursorHandler : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		myHandler = gameObject.GetComponent<GeneralHandler> ();
+		popup = GameObject.Find ("Popup");
 		cursorState = "none";
 	}
 
 	//=======================FOR THE SELECTION FEATURE=====================================
 
 	public void SelectCases(GameObject aCase){
-		if (cursorState == "Select") {
+		if (cursorState == "none") {
 			if (!Input.GetKey (KeyCode.LeftControl) && !Input.GetKey (KeyCode.RightControl)) {
-				foreach (CaseHandler old in allSelected) {
-					old.specialProperties ["Selected"] = false;
-					Destroy (old.gameObject.transform.Find ("Selected").gameObject);
-				}
+				foreach (CaseHandler old in allSelected)
+					if (old.hor != aCase.GetComponent<CaseHandler>().hor ||
+						old.ver != aCase.GetComponent<CaseHandler>().ver) {
+						old.specialProperties ["Selected"] = false;
+						Destroy (old.gameObject.transform.Find ("Selected").gameObject);
+					}
 				allSelected = new List<CaseHandler> ();
 			}
 			firstSelected = aCase.GetComponent<CaseHandler> ();
@@ -43,8 +48,8 @@ public class CursorHandler : MonoBehaviour {
 		}
 	}
 	public void DragCases(bool isDragging){
-		if (cursorState == "Select") {
-			if (isDragging)
+		if (cursorState == "none") {
+			if (isDragging && isLeft)
 				secondaryState = "Drag";
 			else {
 				secondaryState = null;
@@ -54,13 +59,19 @@ public class CursorHandler : MonoBehaviour {
 		}
 	}
 	public void WasJustAClick(){
-		if (cursorState == "Select" && secondaryState == null) {
+		if (cursorState == "none" && secondaryState == null) {
 			allSelected.AddRange (interSelected);
 			interSelected = new List<CaseHandler> ();
 		}
+		if (!isLeft) {
+			popup.SetActive (true);
+			popup.transform.SetAsLastSibling ();
+			popup.GetComponentInChildren<Text> ().text = 
+				myHandler.encyclopedia.GetComponent<Encyclopedia> ().myDescr [firstSelected.type];
+		}
 	}
 	public void RecalculateSelected(GameObject caseOver){
-		if (cursorState == "Select" && secondaryState == "Drag") {
+		if (cursorState == "none" && secondaryState == "Drag" && isLeft) {
 
 			int i1 = firstSelected.hor;int j1 = firstSelected.ver;
 			int i2 = caseOver.GetComponent<CaseHandler>().hor; int j2 = caseOver.GetComponent<CaseHandler>().ver;
@@ -83,6 +94,7 @@ public class CursorHandler : MonoBehaviour {
 		}
 
 	}
+
 
 	//=======================FOR THE COPY==================================================
 
@@ -150,6 +162,7 @@ public class CursorHandler : MonoBehaviour {
 			myHandler.myCases [position] = goal.GetComponent<CaseHandler>();
 
 			myHandler.SetNeighbours ();
+
 			Destroy(firstCaseSelected.transform.Find("Selected").gameObject);
 			firstCaseSelected.GetComponent<CaseHandler> ().specialProperties ["Selected"] = false;
 
@@ -170,14 +183,21 @@ public class CursorHandler : MonoBehaviour {
 			}
 			allSelected = new List<CaseHandler> ();
 		}
-		cursorState = state;
+		if (cursorState != state)
+			cursorState = state;
+		else
+			cursorState = "none";
 	}
 
 	// Update is called once per frame
 	void Update () {
-		if(Input.GetMouseButtonDown(0) || Input.GetAxis("Mouse ScrollWheel") > 0f)
-			isLeft=true;
-		if(Input.GetMouseButtonDown(1) || Input.GetAxis("Mouse ScrollWheel") < 0f)
-			isLeft=false;
+		if (Input.GetMouseButtonDown (0) || Input.GetAxis ("Mouse ScrollWheel") > 0f) {
+			popup.SetActive (false);
+			isLeft = true;
+		}
+		if (Input.GetMouseButtonDown (1) || Input.GetAxis ("Mouse ScrollWheel") < 0f) {
+			popup.SetActive (false);
+			isLeft = false;
+		}
 	}
 }

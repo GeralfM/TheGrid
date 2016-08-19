@@ -236,7 +236,7 @@ public class CaseHandler : MonoBehaviour {
 	public void BeigClicked(){
 
 		List<CaseHandler> goals = new List<CaseHandler> ();
-		if (specialProperties ["Selected"] && !(myCursor.cursorState == "Select"))
+		if (specialProperties ["Selected"] && !(myCursor.cursorState == "none"))
 			goals.AddRange (myCursor.allSelected);
 		else
 			goals.Add (this);
