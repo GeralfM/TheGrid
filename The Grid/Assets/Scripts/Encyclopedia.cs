@@ -15,7 +15,11 @@ public class Encyclopedia : MonoBehaviour {
 	public Dictionary<string,bool> allTypes = new Dictionary<string, bool>();
 	public List<ElementHandler> myElements = new List<ElementHandler>();
 
+	public PopupHandler myPopup { get; set;}
+
 	void Awake(){
+
+		myPopup = GameObject.Find ("PopupInfo").GetComponent<PopupHandler> ();
 
 		if (!(Application.platform == RuntimePlatform.WindowsPlayer)) {
 			string[] descr = Resources.Load<TextAsset> ("Files/Descriptions").text.Split 
@@ -62,6 +66,13 @@ public class Encyclopedia : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		
+	}
+
+	public void CheckDiscovered(string type){
+		if (!allTypes [type]) {
+			myPopup.addInfo (type + " has been discovered !");
+			allTypes [type] = true;
+		}
 	}
 
 	public void MajIcons(){

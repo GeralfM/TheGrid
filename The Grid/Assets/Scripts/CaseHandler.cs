@@ -257,8 +257,8 @@ public class CaseHandler : MonoBehaviour {
 
 	public void SetType(string newType){
 		type = newType;
-		myHandler.encyclopedia.GetComponent<Encyclopedia> ().allTypes [type] = true;
 		gameObject.GetComponent<Image> ().sprite = Resources.Load<Sprite> ("Sprites/" + newType);
+		myHandler.encyclopedia.GetComponent<Encyclopedia> ().CheckDiscovered(type);
 	}
 
 	public void PrintCarac(string carac){

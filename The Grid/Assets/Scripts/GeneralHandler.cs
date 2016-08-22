@@ -125,7 +125,7 @@ public class GeneralHandler : MonoBehaviour {
 			newAttr.GetComponent<Transform> ().localPosition = Vector3.zero;
 			newAttr.name = theType;
 			if (!new List<string>{ "Selected" }.Contains (theType)) {
-				encyclopedia.GetComponent<Encyclopedia> ().allTypes [theType] = true;
+				encyclopedia.GetComponent<Encyclopedia> ().CheckDiscovered(theType);
 				newAttr.AddComponent (System.Type.GetType (theType + "_Script"));
 			}
 			else {
