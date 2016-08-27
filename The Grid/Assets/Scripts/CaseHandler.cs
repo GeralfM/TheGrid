@@ -230,7 +230,7 @@ public class CaseHandler : MonoBehaviour {
 
 	public void BeingScrolled(){
 		if (new List<string>{ "Heat", "Humidity", "Pressure" }.Contains (myCursor.cursorState))
-			BeigClicked ();
+			Invoke("BeigClicked",0.01f);
 	}
 
 	public void BeigClicked(){
@@ -244,9 +244,9 @@ public class CaseHandler : MonoBehaviour {
 		foreach (CaseHandler goal in goals) {
 			if (new List<string>{ "Heat", "Humidity", "Pressure" }.Contains (myCursor.cursorState)) {
 				if (myCursor.isLeft)
-					goal.ChangeParam (myCursor.cursorState, 5);
+					goal.ChangeParam (myCursor.cursorState, myHandler.scrollValue);
 				else
-					goal.ChangeParam (myCursor.cursorState, -5);
+					goal.ChangeParam (myCursor.cursorState, -myHandler.scrollValue);
 				SynchroParams ();
 			} else if (myCursor.cursorState == "Switch")
 				myCursor.SwitchCases (gameObject);

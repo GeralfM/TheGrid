@@ -13,17 +13,24 @@ public class GeneralHandler : MonoBehaviour {
 	public Text typeCase{ get; set;}
 	public Text caraCase{ get; set;}
 	public Text timeText{ get; set;}
+	public Text scrollIntensity { get; set;}
+
 	public Dictionary<string,bool> properties = new Dictionary<string, bool> ();
 	public bool copyAuthorized{ get; set;}
 	public Dictionary<string,CaseHandler> myCases = new Dictionary<string, CaseHandler>(); 
-
 	private Dictionary<string,int> orderDisplayed = new Dictionary<string,int>();
 	public Dictionary<string,int> neighboursAngle = new Dictionary<string,int>();
 
 	public bool isDay { get; set;}
 	public int hour { get; set;}
+	public int scrollValue { get; set;}
 
 	void Awake () {
+		typeCase = GameObject.Find ("NameType").GetComponent<Text> ();
+		caraCase = GameObject.Find ("NameCaracs").GetComponent<Text> ();
+		timeText = GameObject.Find ("NameTime").GetComponent<Text> ();
+		scrollIntensity = GameObject.Find ("ScrollIntensity").GetComponentInChildren<Text> ();
+
 		properties.Add ("copyAuthorized", false);
 		properties.Add ("cataclysmsAuthorized", true);
 
@@ -68,6 +75,10 @@ public class GeneralHandler : MonoBehaviour {
 
 	public void CreateNewGrid(){
 
+		ButtonHandler button = GameObject.Find ("ButtonPlay").GetComponent<ButtonHandler>();
+		if (Time.timeScale == 0)
+			button.HandleTime ();
+
 		isDay = true; hour = 0;
 
 		for (int i = 0; i < 12; i++) {
@@ -87,10 +98,7 @@ public class GeneralHandler : MonoBehaviour {
 			}
 		}
 		SetNeighbours ();
-	
-		typeCase = GameObject.Find ("NameType").GetComponent<Text> ();
-		caraCase = GameObject.Find ("NameCaracs").GetComponent<Text> ();
-		timeText = GameObject.Find ("NameTime").GetComponent<Text> ();
+		SetScrollValue (5);
 
 	}
 
@@ -218,6 +226,20 @@ public class GeneralHandler : MonoBehaviour {
 		return answer;
 	}
 
+	public void SetScrollValue(int val){
+		scrollValue = Mathf.Min (Mathf.Max (val, 1), 10);
+		scrollIntensity.text = scrollValue.ToString ();
+	}
+	public void ModifyScrollValue(bool more){
+		if (more)
+			SetScrollValue (scrollValue + 1);
+		else
+			SetScrollValue (scrollValue - 1);
+	}
+	public void ModifyScrollValue(){
+		ModifyScrollValue (GetComponent<CursorHandler>().isLeft);
+	}
+
 	public void PrintInfos(string type, string descr){
 		typeCase.text = type;
 		caraCase.text = descr;
@@ -262,6 +284,12 @@ public class GeneralHandler : MonoBehaviour {
 		if (Input.GetKeyDown (KeyCode.W))
 			foreach (CaseHandler caseH in myCases.Values)
 				caseH.PrintCarac("Wind");
+		
+		if (Input.GetKeyDown(KeyCode.UpArrow))
+			ModifyScrollValue(true);
+		if (Input.GetKeyDown(KeyCode.DownArrow))
+			ModifyScrollValue(false);
+		
 		if (Input.GetKeyDown (KeyCode.Escape)) {
 			DisplayMenu (menu);
 			if (encyclopedia.activeSelf)

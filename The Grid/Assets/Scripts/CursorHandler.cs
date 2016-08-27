@@ -63,7 +63,7 @@ public class CursorHandler : MonoBehaviour {
 			allSelected.AddRange (interSelected);
 			interSelected = new List<CaseHandler> ();
 		}
-		if (!isLeft) {
+		if (!isLeft && cursorState=="none") {
 			popup.SetActive (true);
 			popup.transform.SetAsLastSibling ();
 			popup.GetComponentInChildren<Text> ().text = 
