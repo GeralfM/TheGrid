@@ -72,8 +72,8 @@ public class Water_Script : Case {
 
 	void OnDestroy(){
 		foreach (Transform child in myCase.transform)
-			if (child.gameObject.name == "Organisms")
-				Destroy (child);
+			if (child.gameObject.name == "Organism")
+				Destroy (child.gameObject);
 	}
 		
 }

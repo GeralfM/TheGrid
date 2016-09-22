@@ -33,10 +33,12 @@ public class Encyclopedia : MonoBehaviour {
 				myDescr.Add (descr [k].Replace ("\n", ""), descr [k + 1]);
 		}
 			
-		int numBlocs = 15;
+		int numBlocs = 18;
 		int i; int j; int count = 0;
-		string[] types = new string[]{ "Carbon", "Mushroom", "Diamond", "Water", "Fire", "Ice",
-			"Grass", "Lava", "Cloud", "Organism", "Stone", "Sand", "Dirt", "Steam", "Void" };
+		string[] types = new string[] {"Carbon", "Cloud", "Diamond", "Diamond_Wind_Turbine", 
+			"Dirt", "Fire", "Fish", "Grass",
+			"Ice", "Lava", "Mushroom", "Organism", "Sand", 
+			"Steam", "Stone", "Void", "Water", "Wind_Turbine"};
 		foreach (string aType in types)
 			allTypes.Add (aType, false);
 		allTypes ["Void"] = true;

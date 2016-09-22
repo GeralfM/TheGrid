@@ -8,12 +8,17 @@ public class Organism_Script : MonoBehaviour {
 	public CaseHandler myCase{ get; set;}
 	public Dictionary<int, string> directions = new Dictionary<int, string>();
 
+	public int hoursCount{ get; set;}
+
 	// Use this for initialization
 	void Start () {
+		hoursCount = 0;
+
 		Initialize ();
 		gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite> ("Sprites/Organism");
 		StartCoroutine (Movement ());
 		StartCoroutine (StillHere ());
+		StartCoroutine (PrepareEvolution ());
 	}
 
 	public void Initialize(){
@@ -22,8 +27,10 @@ public class Organism_Script : MonoBehaviour {
 		directions = new Dictionary<int, string> ();
 		int i = 1;
 		foreach (string dir in myCase.neighbours.Keys) {
-			directions.Add (i, dir);
-			i++;
+			if (myCase.neighbours[dir].type == "Water" && myCase.neighbours[dir].caracs ["Organisms"] < 10) {
+				directions.Add (i, dir);
+				i++;
+			}
 		}
 
 		myCase.caracs["Organisms"]++;
@@ -31,6 +38,29 @@ public class Organism_Script : MonoBehaviour {
 			myCase.specialProperties ["Organism"] = true;
 			myCase.descriptionBonus.Add ("Organisms", "Organisms");
 		}
+	}
+
+	public IEnumerator PrepareEvolution(){
+		yield return new WaitForSeconds (50 * myCase.timeM);
+		hoursCount++;
+		if (hoursCount < 72)
+			StartCoroutine (PrepareEvolution ());
+		else
+			StartCoroutine (Evolve ());
+	}
+	public IEnumerator Evolve(){
+		yield return new WaitForSeconds (50 * myCase.timeM + Random.Range (1f, -1f)); 
+		StartCoroutine (Evolve ());
+		if (!myCase.specialProperties ["Paused"]) {
+
+			if (Random.Range (1, 101) <= 10) {
+				myCase.myHandler.NewAttribute (myCase.gameObject, "Fish");
+				MajCaracs ();
+				Destroy (gameObject);
+			}
+
+		}
+
 	}
 
 	public IEnumerator Movement(){

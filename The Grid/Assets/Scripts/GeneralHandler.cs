@@ -9,6 +9,9 @@ public class GeneralHandler : MonoBehaviour {
 	public GameObject encyclopedia;
 	public GameObject firstCase;
 	public GameObject firstAttribute;
+	public GameObject energyBar;
+
+	public BuildingsHandler myBuilder{ get; set;}
 
 	public Text typeCase{ get; set;}
 	public Text caraCase{ get; set;}
@@ -21,9 +24,14 @@ public class GeneralHandler : MonoBehaviour {
 	private Dictionary<string,int> orderDisplayed = new Dictionary<string,int>();
 	public Dictionary<string,int> neighboursAngle = new Dictionary<string,int>();
 
+	public bool infoLocked { get; set;}
+	public bool energyLocked{ get; set;}
+
 	public bool isDay { get; set;}
 	public int hour { get; set;}
 	public int scrollValue { get; set;}
+
+	public float energy { get; set;}
 
 	void Awake () {
 		typeCase = GameObject.Find ("NameType").GetComponent<Text> ();
@@ -31,16 +39,20 @@ public class GeneralHandler : MonoBehaviour {
 		timeText = GameObject.Find ("NameTime").GetComponent<Text> ();
 		scrollIntensity = GameObject.Find ("ScrollIntensity").GetComponentInChildren<Text> ();
 
+		myBuilder = gameObject.GetComponent<BuildingsHandler> ();
+
 		properties.Add ("copyAuthorized", false);
 		properties.Add ("cataclysmsAuthorized", true);
 
 		orderDisplayed.Add("Grass",1);
-		orderDisplayed.Add("Organism",1);
+		orderDisplayed.Add("Organism",1); // Water
+		orderDisplayed.Add("Fish",2); // Water
 		orderDisplayed.Add("Mushroom",2);
-		orderDisplayed.Add("Fire",3);
-		orderDisplayed.Add("Cloud",4);
+		orderDisplayed.Add("Wind_Turbine",3);
+		orderDisplayed.Add("Fire",4);
+		orderDisplayed.Add("Cloud",5);
 		foreach(string element in new List<string>{"Selected","Heat","Hum","Vit","Pres", "Wind"})
-			orderDisplayed.Add(element,5);
+			orderDisplayed.Add(element,6);
 
 		neighboursAngle.Add ("01", 0);
 		neighboursAngle.Add ("11", 315);
@@ -99,7 +111,9 @@ public class GeneralHandler : MonoBehaviour {
 		}
 		SetNeighbours ();
 		SetScrollValue (5);
-
+		energy = 0f; ChangeEnergy (20f);
+		infoLocked = false;
+		energyLocked = false;
 	}
 
 	public void SetNeighbours(){
@@ -126,26 +140,36 @@ public class GeneralHandler : MonoBehaviour {
 			test.Add (child.gameObject.name);
 		if (!test.Contains (theType) || new List<string>{ "Organism" }.Contains (theType)) {
 			GameObject newAttr = Instantiate (firstAttribute);
+			GameObject newAnim = newAttr.transform.FindChild ("Animated").gameObject;
 			newAttr.transform.SetParent (goal.transform);
 			newAttr.GetComponent<RectTransform> ().offsetMax = Vector2.zero;
 			newAttr.GetComponent<RectTransform> ().offsetMin = Vector2.zero;
 			newAttr.GetComponent<RectTransform> ().localScale = Vector3.one;
 			newAttr.GetComponent<Transform> ().localPosition = Vector3.zero;
 			newAttr.name = theType;
-			if (!new List<string>{ "Selected" }.Contains (theType)) {
-				encyclopedia.GetComponent<Encyclopedia> ().CheckDiscovered(theType);
-				newAttr.AddComponent (System.Type.GetType (theType + "_Script"));
+
+			newAnim.GetComponent<RectTransform> ().localScale = Vector3.one * 60f;
+			newAnim.GetComponent<Transform> ().localPosition = new Vector3 (0, 0, -1);
+
+			if (new List<string>{ "Wind_Turbine" }.Contains (theType)) {
+				newAnim.GetComponentInChildren<Animator> ().CrossFade (theType, 0f);
+				newAttr.GetComponent<Image> ().enabled = false;
 			}
-			else {
+
+			if (!new List<string>{ "Selected" }.Contains (theType)) {
+				encyclopedia.GetComponent<Encyclopedia> ().CheckDiscovered (theType);
+				newAttr.AddComponent (System.Type.GetType (theType + "_Script"));
+			} else {
 				goal.GetComponent<CaseHandler> ().specialProperties ["Selected"] = true;
 				newAttr.GetComponent<Image> ().sprite = Resources.Load<Sprite> ("Sprites/Selected");
 			}
+
 		}
 		OrganizeAttributes (goal);
 	}
 
 	public void OrganizeAttributes(GameObject goal){
-		for (int i = 5; i >= 1; i--)
+		for (int i = 6; i >= 1; i--)
 			foreach (Transform child in goal.transform)
 				if (orderDisplayed [child.gameObject.name] == i)
 					child.SetAsFirstSibling ();
@@ -226,6 +250,19 @@ public class GeneralHandler : MonoBehaviour {
 		return answer;
 	}
 
+	//=====================================================================================
+
+	public void ChangeEnergy(float value){
+		energy = Mathf.Min (Mathf.Max (energy + value, 0f), 200);
+		RectTransform temp = energyBar.GetComponent<RectTransform> ();
+		temp.GetComponent<RectTransform> ().anchorMin = 
+			new Vector2 (0.88f, 0.915f);
+		temp.GetComponent<RectTransform> ().anchorMax = 
+			new Vector2 (0.92f, 0.915f+ energy / 200f * 0.07f);
+		temp.GetComponent<RectTransform> ().offsetMin = Vector2.zero;
+		temp.GetComponent<RectTransform> ().offsetMax = Vector2.zero;
+	}
+
 	public void SetScrollValue(int val){
 		scrollValue = Mathf.Min (Mathf.Max (val, 1), 10);
 		scrollIntensity.text = scrollValue.ToString ();
@@ -241,14 +278,44 @@ public class GeneralHandler : MonoBehaviour {
 	}
 
 	public void PrintInfos(string type, string descr){
-		typeCase.text = type;
-		caraCase.text = descr;
+		if (!infoLocked) {
+			typeCase.text = type;
+			caraCase.text = descr;
+		}
+	}
+	public void PrintMyInfos(string source){
+		switch (source) {
+		case "EnergyField":
+			PrintInfos ("Energy", energy.ToString("F2") + "/200");
+			break;
+		case "ButtonHeat":
+			PrintInfos ("Heat Button", "");
+			break;
+		case "ButtonHumidity":
+			PrintInfos ("Humidity Button", "");
+			break;
+		case "ButtonPressure":
+			PrintInfos ("Pressure Button", "");
+			break;
+		case "ButtonSwitch":
+			PrintInfos ("Switch Button", "Switches two cells for 20 energy");
+			break;
+		case "ButtonCopy":
+			PrintInfos ("Copy Button", "");
+			break;
+		case "ButtonRandom":
+			PrintInfos ("The Red Button", "Randomises all cells' parameter values");
+			break;
+		default:
+			break;
+		}
 	}
 
 	public void DisplayMenu(GameObject cible){
 		if (encyclopedia.activeSelf)
 			encyclopedia.SetActive (false);
-		cible.SetActive (!cible.activeSelf);
+		
+		cible.SetActive (!cible.activeSelf); //for each other component
 
 		if (cible.name == "Encyclopedia")
 			encyclopedia.GetComponent<Encyclopedia> ().MajIcons ();
@@ -295,5 +362,8 @@ public class GeneralHandler : MonoBehaviour {
 			if (encyclopedia.activeSelf)
 				encyclopedia.SetActive (false);
 		}
+
+		if(energyLocked)
+			PrintMyInfos("EnergyField");
 	}
 }

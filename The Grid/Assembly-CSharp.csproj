@@ -45,6 +45,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\BuildingsHandler.cs" />
      <Compile Include="Assets\Scripts\ButtonHandler.cs" />
      <Compile Include="Assets\Scripts\CaseHandler.cs" />
      <Compile Include="Assets\Scripts\CasesScripts\Carbon_Script.cs" />
@@ -53,6 +54,7 @@
      <Compile Include="Assets\Scripts\CasesScripts\Diamond_Script.cs" />
      <Compile Include="Assets\Scripts\CasesScripts\Dirt_Script.cs" />
      <Compile Include="Assets\Scripts\CasesScripts\Fire_Script.cs" />
+     <Compile Include="Assets\Scripts\CasesScripts\Fish_Script.cs" />
      <Compile Include="Assets\Scripts\CasesScripts\Grass_Script.cs" />
      <Compile Include="Assets\Scripts\CasesScripts\Ice_Script.cs" />
      <Compile Include="Assets\Scripts\CasesScripts\Lava_Script.cs" />
@@ -62,9 +64,11 @@
      <Compile Include="Assets\Scripts\CasesScripts\Steam_Script.cs" />
      <Compile Include="Assets\Scripts\CasesScripts\Stone_Script.cs" />
      <Compile Include="Assets\Scripts\CasesScripts\Water_Script.cs" />
+     <Compile Include="Assets\Scripts\CasesScripts\Wind_Turbine_Script.cs" />
      <Compile Include="Assets\Scripts\ChangeCase.cs" />
      <Compile Include="Assets\Scripts\ChangeGround.cs" />
      <Compile Include="Assets\Scripts\CursorHandler.cs" />
+     <Compile Include="Assets\Scripts\DropdownHandler.cs" />
      <Compile Include="Assets\Scripts\ElementHandler.cs" />
      <Compile Include="Assets\Scripts\Encyclopedia.cs" />
      <Compile Include="Assets\Scripts\GeneralHandler.cs" />

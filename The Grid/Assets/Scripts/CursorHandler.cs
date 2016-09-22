@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class CursorHandler : MonoBehaviour {
 
 	public GeneralHandler myHandler { get; set;}
-	public GameObject popup;
+	public GameObject popup { get; set;}
 
 	public string cursorState { get; set;}
 	public bool isLeft { get; set;}
@@ -27,6 +27,7 @@ public class CursorHandler : MonoBehaviour {
 		myHandler = gameObject.GetComponent<GeneralHandler> ();
 		popup = GameObject.Find ("Popup");
 		cursorState = "none";
+		secondaryState = "none";
 	}
 
 	//=======================FOR THE SELECTION FEATURE=====================================
@@ -47,7 +48,7 @@ public class CursorHandler : MonoBehaviour {
 			interSelected.Add (firstSelected);
 		}
 	}
-	public void DragCases(bool isDragging){
+	public void DragCases(bool isDragging){ 
 		if (cursorState == "none") {
 			if (isDragging && isLeft)
 				secondaryState = "Drag";
@@ -58,17 +59,17 @@ public class CursorHandler : MonoBehaviour {
 			}
 		}
 	}
-	public void WasJustAClick(){
+	public void WasJustAClick(){ //also for right-clicking in general
 		if (cursorState == "none" && secondaryState == null) {
 			allSelected.AddRange (interSelected);
 			interSelected = new List<CaseHandler> ();
 		}
-		if (!isLeft && cursorState=="none") {
+		if (!isLeft && cursorState == "none") {
 			popup.SetActive (true);
 			popup.transform.SetAsLastSibling ();
 			popup.GetComponentInChildren<Text> ().text = 
 				myHandler.encyclopedia.GetComponent<Encyclopedia> ().myDescr [firstSelected.type];
-		}
+		} 
 	}
 	public void RecalculateSelected(GameObject caseOver){
 		if (cursorState == "none" && secondaryState == "Drag" && isLeft) {
@@ -95,6 +96,12 @@ public class CursorHandler : MonoBehaviour {
 
 	}
 
+	//=======================FOR THE BUILDING==============================================
+
+	public void tryConstruct(GameObject goalCase, string caseType){
+		if (myHandler.myBuilder.MayConstruct(caseType)) 
+			myHandler.NewAttribute (goalCase, secondaryState);
+	}
 
 	//=======================FOR THE COPY==================================================
 
@@ -130,44 +137,47 @@ public class CursorHandler : MonoBehaviour {
 	//=======================FOR THE SWITCH==================================================
 
 	public void SwitchCases(GameObject goal){
-		if (firstCaseSelected == null) {
-			firstCaseSelected = goal;
-			myHandler.NewAttribute (goal, "Selected");
-			FC_anchorMax = goal.GetComponent<RectTransform> ().anchorMax;
-			FC_anchorMin = goal.GetComponent<RectTransform> ().anchorMin;
-			hor = goal.GetComponent<CaseHandler> ().hor;
-			ver = goal.GetComponent<CaseHandler> ().ver;
+		if (myHandler.energy >= 20) {
+			
+			if (firstCaseSelected == null) {
+				firstCaseSelected = goal;
+				myHandler.NewAttribute (goal, "Selected");
+				FC_anchorMax = goal.GetComponent<RectTransform> ().anchorMax;
+				FC_anchorMin = goal.GetComponent<RectTransform> ().anchorMin;
+				hor = goal.GetComponent<CaseHandler> ().hor;
+				ver = goal.GetComponent<CaseHandler> ().ver;
+			} else {
+				firstCaseSelected.GetComponent<RectTransform> ().anchorMax = goal.GetComponent<RectTransform> ().anchorMax;
+				firstCaseSelected.GetComponent<RectTransform> ().anchorMin = goal.GetComponent<RectTransform> ().anchorMin;
+				firstCaseSelected.GetComponent<RectTransform> ().offsetMax = Vector2.zero;
+				firstCaseSelected.GetComponent<RectTransform> ().offsetMin = Vector2.zero;
+				firstCaseSelected.GetComponent<CaseHandler> ().hor = goal.GetComponent<CaseHandler> ().hor;
+				firstCaseSelected.GetComponent<CaseHandler> ().ver = goal.GetComponent<CaseHandler> ().ver;
+
+				string position = firstCaseSelected.GetComponent<CaseHandler> ().hor + "" +
+				                 firstCaseSelected.GetComponent<CaseHandler> ().ver;
+				myHandler.myCases [position] = firstCaseSelected.GetComponent<CaseHandler> ();
+
+				goal.GetComponent<RectTransform> ().anchorMax = FC_anchorMax;
+				goal.GetComponent<RectTransform> ().anchorMin = FC_anchorMin;
+				goal.GetComponent<RectTransform> ().offsetMax = Vector2.zero;
+				goal.GetComponent<RectTransform> ().offsetMin = Vector2.zero;
+				goal.GetComponent<CaseHandler> ().hor = hor;
+				goal.GetComponent<CaseHandler> ().ver = ver;
+
+				position = goal.GetComponent<CaseHandler> ().hor + "" + goal.GetComponent<CaseHandler> ().ver;
+				myHandler.myCases [position] = goal.GetComponent<CaseHandler> ();
+
+				myHandler.SetNeighbours ();
+
+				Destroy (firstCaseSelected.transform.Find ("Selected").gameObject);
+				firstCaseSelected.GetComponent<CaseHandler> ().specialProperties ["Selected"] = false;
+
+				myHandler.ChangeEnergy (-20f);
+				firstCaseSelected = null;
+			}
 		}
-		
-		else {
-			firstCaseSelected.GetComponent<RectTransform> ().anchorMax = goal.GetComponent<RectTransform> ().anchorMax;
-			firstCaseSelected.GetComponent<RectTransform> ().anchorMin = goal.GetComponent<RectTransform> ().anchorMin;
-			firstCaseSelected.GetComponent<RectTransform> ().offsetMax = Vector2.zero;
-			firstCaseSelected.GetComponent<RectTransform> ().offsetMin = Vector2.zero;
-			firstCaseSelected.GetComponent<CaseHandler> ().hor = goal.GetComponent<CaseHandler>().hor;
-			firstCaseSelected.GetComponent<CaseHandler> ().ver = goal.GetComponent<CaseHandler>().ver;
 
-			string position = firstCaseSelected.GetComponent<CaseHandler> ().hor + "" +
-				firstCaseSelected.GetComponent<CaseHandler> ().ver;
-			myHandler.myCases [position] = firstCaseSelected.GetComponent<CaseHandler>();
-
-			goal.GetComponent<RectTransform> ().anchorMax = FC_anchorMax;
-			goal.GetComponent<RectTransform> ().anchorMin = FC_anchorMin;
-			goal.GetComponent<RectTransform> ().offsetMax = Vector2.zero;
-			goal.GetComponent<RectTransform> ().offsetMin = Vector2.zero;
-			goal.GetComponent<CaseHandler> ().hor = hor;
-			goal.GetComponent<CaseHandler> ().ver = ver;
-
-			position = goal.GetComponent<CaseHandler> ().hor + "" + goal.GetComponent<CaseHandler> ().ver;
-			myHandler.myCases [position] = goal.GetComponent<CaseHandler>();
-
-			myHandler.SetNeighbours ();
-
-			Destroy(firstCaseSelected.transform.Find("Selected").gameObject);
-			firstCaseSelected.GetComponent<CaseHandler> ().specialProperties ["Selected"] = false;
-
-			firstCaseSelected = null;
-		}
 	}
 
 	public void SetState(string state){
@@ -175,7 +185,7 @@ public class CursorHandler : MonoBehaviour {
 			Destroy(firstCaseSelected.transform.Find("Selected").gameObject);
 			firstCaseSelected = null;
 		}
-		if (new List<string>{ "Switch", "Copy", "none" }.Contains (state) && allSelected.Count > 0) {
+		if (new List<string>{ "Switch", "Copy", "Building", "none" }.Contains (state) && allSelected.Count > 0) {
 			firstSelected = null;
 			foreach (CaseHandler old in allSelected) {
 				old.specialProperties ["Selected"] = false;

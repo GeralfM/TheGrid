@@ -6,7 +6,7 @@ Carbon
 <b>Solid :</b> Yes
 <b>Heat transfer resistance :</b> 3
 <b>Can lead to :</b> Diamond, Void
-<b>Can generate :</b>
+<b>Can generate or allow :</b>
 ===
 Mushroom
 ===
@@ -22,7 +22,13 @@ Diamond
 <b>Solid :</b> Yes
 <b>Heat transfer resistance :</b> -1
 <b>Can lead to :</b>
-<b>Can generate :</b>
+<b>Can generate or allow :</b> Wind turbine, Diamond wind turbine
+===
+Diamond_Wind_Turbine
+===
+<b>Appearance :</b> Wind turbine built on diamond
+<b>Disappearance :</b> The bloc is not dirt, stone or diamond anymore
+<b>Effects :</b> Refill the energy bar by 0.5 per hour if the wind is at maximum power
 ===
 Water
 ===
@@ -32,7 +38,7 @@ Water
 <b>Solid :</b> No
 <b>Heat transfer resistance :</b> 10
 <b>Can lead to :</b> Ice, Steam, Void
-<b>Can generate :</b> Organisms
+<b>Can generate or allow :</b> Organisms
 ===
 Fire
 ===
@@ -48,7 +54,7 @@ Ice
 <b>Solid :</b> Yes
 <b>Heat transfer resistance :</b> 5
 <b>Can lead to :</b> Water, Void
-<b>Can generate :</b>
+<b>Can generate or allow :</b>
 ===
 Grass
 ===
@@ -64,7 +70,7 @@ Lava
 <b>Solid :</b> No
 <b>Heat transfer resistance :</b> 2
 <b>Can lead to :</b> Stone
-<b>Can generate :</b> 
+<b>Can generate or allow :</b> 
 ===
 Cloud
 ===
@@ -77,6 +83,7 @@ Organism
 <b>Appearance :</b> on water, with temperature between 45 and 50, 30% chances per hour
 <b>Disappearance :</b> temperature out of the 45 to 55 range
 <b>Effects :</b> grows by 1 per hour. Maximum 10. Every 2H, an organism has 80% chances to move to a neighboring cell
+<b>Can lead to :</b> Fish
 ===
 Stone
 ===
@@ -86,7 +93,7 @@ Stone
 <b>Solid :</b> Yes
 <b>Heat transfer resistance :</b> 5
 <b>Can lead to :</b> Carbon (burning 8H), Lava, Sand, Void
-<b>Can generate :</b> 
+<b>Can generate or allow :</b> Wind turbine
 ===
 Sand
 ===
@@ -96,7 +103,7 @@ Sand
 <b>Solid :</b> Yes if humidity <= 70, no otherwise
 <b>Heat transfer resistance :</b> 5
 <b>Can lead to :</b> Carbon (burning 2H), Stone
-<b>Can generate :</b> 
+<b>Can generate or allow :</b> 
 ===
 Dirt
 ===
@@ -106,7 +113,7 @@ Dirt
 <b>Solid :</b> Yes
 <b>Heat transfer resistance :</b> 3
 <b>Can lead to :</b> Carbon (burning 3H)
-<b>Can generate :</b> Grass, Mushroom
+<b>Can generate or allow :</b> Grass, Mushroom, Wind turbine
 ===
 Steam
 ===
@@ -116,7 +123,7 @@ Steam
 <b>Solid :</b> No
 <b>Heat transfer resistance :</b> 3
 <b>Can lead to :</b> Void
-<b>Can generate :</b> 
+<b>Can generate or allow :</b> 
 ===
 Void
 ===
@@ -126,4 +133,18 @@ Void
 <b>Solid :</b> Yes
 <b>Heat transfer resistance :</b> 0
 <b>Can lead to :</b> Water, Stone, Dirt, Steam
-<b>Can generate :</b> 
+<b>Can generate or allow :</b> 
+===
+Wind_Turbine
+===
+<b>Appearance :</b> Built on dirt or stone
+<b>Disappearance :</b> The bloc is not dirt or stone anymore
+<b>Effects :</b> Refill the energy bar by 1 per hour if the wind is at maximum power
+<b>Can lead to :</b> Diamond Wind Turbine
+===
+Fish
+===
+<b>Appearance :</b> Organisms having survived 3 days, 10% chances per hour
+<b>Disappearance :</b> The bloc is not water anymore
+<b>Effects :</b> 
+<b>Can lead to :</b> 

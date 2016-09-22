@@ -43,12 +43,15 @@ public class CaseHandler : MonoBehaviour {
 		caracs.Add ("Grad_Heat", 0);
 		caracs.Add ("Organisms", 0);
 		caracs.Add ("Wind", -1);
+		caracs.Add ("WindPower", 0);
 
 		timeM = 1f;
 		specialProperties.Add ("Cloud", false);
+		specialProperties.Add ("Building", false);
 		specialProperties.Add ("Grass", false);
 		specialProperties.Add ("Flammable", false);
 		specialProperties.Add ("Fire", false);
+		specialProperties.Add ("Fish", false);
 		specialProperties.Add ("Organism", false);
 		specialProperties.Add ("Mushroom", false);
 		specialProperties.Add ("Solid", true);
@@ -69,11 +72,7 @@ public class CaseHandler : MonoBehaviour {
 	}
 
 	/*public void test(){
-		foreach (CaseHandler acase in myHandler.myCases.Values) {
-			acase.myAnim.CrossFade ("Water", 0f);
-			acase.ChangeParam ("Heat", -5);
-		}
-		myHandler.NewAttribute (gameObject, "Organism");
+		myHandler.NewAttribute (gameObject, "Wind_Turbine");
 	}*/
 
 	public IEnumerator HeatMovement(){
@@ -185,8 +184,12 @@ public class CaseHandler : MonoBehaviour {
 	public void RecomputeWindDirection(){
 		bool greater = false;
 		bool singleMinimum = false;
+		int pressureMax = caracs ["Pressure"];
 		windGoal = this;
+
 		foreach (CaseHandler neigh in sqNeighbours.Values) {
+			pressureMax = Mathf.Max (pressureMax, neigh.caracs ["Pressure"]);
+
 			if (neigh.caracs ["Pressure"] > caracs ["Pressure"])
 				greater = true;
 			if (neigh.caracs ["Pressure"] < windGoal.caracs ["Pressure"]) {
@@ -196,11 +199,14 @@ public class CaseHandler : MonoBehaviour {
 				singleMinimum = false;
 				
 		}
-		if (greater && singleMinimum && windGoal != this) 
+		if (greater && singleMinimum && windGoal != this) {
 			caracs ["Wind"] = myHandler.neighboursAngle [(windGoal.hor - hor).ToString () +
-				(windGoal.ver - ver).ToString ()];
-		else
+			(windGoal.ver - ver).ToString ()];
+			caracs ["WindPower"] = (pressureMax - windGoal.caracs ["Pressure"] - 1) / 20 + 1;
+		} else {
 			caracs ["Wind"] = -1;
+			caracs ["WindPower"] = 0;
+		}
 	}
 
 	public IEnumerator SoGoldMuchWow(){
@@ -212,7 +218,8 @@ public class CaseHandler : MonoBehaviour {
 			else
 				gameObject.GetComponent<Image> ().color = new Color (255f, 255f, 255f);
 			specialProperties ["golden"] = !specialProperties ["golden"];
-		} else gameObject.GetComponent<Image> ().color = new Color (255f, 255f, 255f);
+		} else if(myCursor.cursorState!="Building")
+			gameObject.GetComponent<Image> ().color = new Color (255f, 255f, 255f);
 	}
 
 	public void TransitionWithParams(string typeGoal, int hum, int heat){
@@ -252,6 +259,8 @@ public class CaseHandler : MonoBehaviour {
 				myCursor.SwitchCases (gameObject);
 			else if (myCursor.cursorState == "Copy")
 				myCursor.CopyCases (gameObject);
+			else if (myCursor.cursorState == "Building" && myCursor.secondaryState != "none")
+				myCursor.tryConstruct (gameObject, type);
 		}
 	}
 
@@ -330,6 +339,8 @@ public class CaseHandler : MonoBehaviour {
 		} else if (myWind.activeSelf) {
 			if (caracs ["Wind"] != -1) {
 				transform.Find ("Wind").GetComponent<Image> ().enabled = true;
+				transform.Find ("Wind").GetComponent<RectTransform> ().localScale =
+					new Vector3 (caracs["WindPower"]/5f, caracs["WindPower"]/5f, 1);
 				transform.Find ("Wind").GetComponent<Transform> ().eulerAngles = new Vector3 (0f, 0f, caracs["Wind"]);
 			}
 			else
@@ -339,11 +350,21 @@ public class CaseHandler : MonoBehaviour {
 
 	public void PointerStatus(bool isOver){
 		specialProperties ["PointerOver"] = isOver;
+		//Building test
+		if(isOver && myCursor.cursorState == "Building" && myCursor.secondaryState != "none"){
+			if(!specialProperties["Building"] && myHandler.myBuilder.MayConstruct(type))
+				gameObject.GetComponent<Image> ().color = new Color (0f, 1f, 0f);
+			else
+				gameObject.GetComponent<Image> ().color = new Color (1f, 0f, 0f);
+		}
+		else
+			gameObject.GetComponent<Image> ().color = new Color (1f, 1f, 1f);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (specialProperties ["PointerOver"])
+		if (specialProperties ["PointerOver"]) 
 			ReturnDescription ();
 	}
+
 }

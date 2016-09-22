@@ -8,6 +8,8 @@ public class ButtonHandler : MonoBehaviour {
 	public GeneralHandler myHandler { get; set;}
 	public CursorHandler myCursor { get; set;}
 
+	public GameObject mypopup;
+
 	public Image myImage { get; set;}
 	public float stockedTime { get; set;}
 
@@ -28,8 +30,13 @@ public class ButtonHandler : MonoBehaviour {
 	public void SetSelected(bool itIs){
 		if (itIs)
 			myImage.color = new Color (1, 1, 1, 1);
-		else
+		else {
 			myImage.color = new Color (1, 1, 1, 0.5f);
+			if (gameObject.name == "ButtonBuildings") {
+				mypopup.SetActive (false);
+				myHandler.infoLocked = false;
+			}
+		}
 		selected = itIs;
 	}
 
